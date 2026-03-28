@@ -1,8 +1,8 @@
 node_modules/
 .expo/
-nano .gitignore
+.expo-shared/
+web-build/
 dist/
-web-build
 .env
 .DS_Store
 npm-debug.*
