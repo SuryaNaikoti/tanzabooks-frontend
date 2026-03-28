@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="316.807" height="194.297" viewBox="0 0 316.807 194.297">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.809" y1="0.5" x2="-1.516" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff6f00"/>
+      <stop offset="1" stop-color="#ffd500"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="-0.396" y1="0.5" x2="0.773" y2="0.5" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="-1.086" y1="0.5" x2="0.664" y2="0.5" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="Group_3182" data-name="Group 3182" transform="translate(-849.047 -460.012)">
+    <g id="Group_3169" data-name="Group 3169" transform="translate(19 -30.249)">
+      <g id="Group_3121" data-name="Group 3121" transform="translate(830.047 490.261)">
+        <rect id="Rectangle_2332" data-name="Rectangle 2332" width="316.807" height="64.754" fill="#f2f2f2"/>
+        <rect id="Rectangle_2334" data-name="Rectangle 2334" width="316.807" height="64.755" transform="translate(0 129.543)" fill="#f2f2f2"/>
+      </g>
+      <text id="Total_tanzabooks_5" data-name="Total tanzabooks 5" transform="translate(904 527)" fill="#252424" font-size="20" font-family="Lato-Regular, Lato"><tspan x="0" y="0">Total tanzabooks </tspan><tspan y="0" font-family="Lato-Semibold, Lato" font-weight="600">5</tspan></text>
+      <text id="Total_Groups_5" data-name="Total Groups 5" transform="translate(922 590)" fill="#252424" font-size="20" font-family="Lato-Regular, Lato"><tspan x="0" y="0">Total Groups </tspan><tspan y="0" font-family="Lato-Semibold, Lato" font-weight="600">5</tspan></text>
+      <text id="Total_Folders_5" data-name="Total Folders 5" transform="translate(922 658)" fill="#252424" font-size="20" font-family="Lato-Regular, Lato"><tspan x="0" y="0">Total Folders </tspan><tspan y="0" font-family="Lato-Semibold, Lato" font-weight="600">5</tspan></text>
+    </g>
+    <g id="Group_3172" data-name="Group 3172" transform="translate(688.84 80.484)">
+      <path id="Path_9426" data-name="Path 9426" d="M215.874,411.765l-9.244,11H194.75l9.251-11-9.251-11h11.873Z" fill="url(#linear-gradient)"/>
+      <path id="Path_9427" data-name="Path 9427" d="M231.324,416.193l-5.9,7.023h-7.585l5.906-7.023-5.906-7.024h7.58Z" transform="translate(-12.163 -4.428)" opacity="0.3" fill="url(#linear-gradient-2)"/>
+      <path id="Path_9428" data-name="Path 9428" d="M228,414.618l-7.091,8.439H216.32l7.1-8.439-7.1-8.439H220.9Z" transform="translate(-11.364 -2.853)" fill="url(#linear-gradient-3)"/>
+    </g>
+    <g id="Group_3173" data-name="Group 3173" transform="translate(688.84 141.734)">
+      <path id="Path_9426-2" data-name="Path 9426" d="M215.874,411.765l-9.244,11H194.75l9.251-11-9.251-11h11.873Z" fill="url(#linear-gradient)"/>
+      <path id="Path_9427-2" data-name="Path 9427" d="M231.324,416.193l-5.9,7.023h-7.585l5.906-7.023-5.906-7.024h7.58Z" transform="translate(-12.163 -4.428)" opacity="0.3" fill="url(#linear-gradient-2)"/>
+      <path id="Path_9428-2" data-name="Path 9428" d="M228,414.618l-7.091,8.439H216.32l7.1-8.439-7.1-8.439H220.9Z" transform="translate(-11.364 -2.853)" fill="url(#linear-gradient-3)"/>
+    </g>
+    <g id="Group_3174" data-name="Group 3174" transform="translate(688.84 210.734)">
+      <path id="Path_9426-3" data-name="Path 9426" d="M215.874,411.765l-9.244,11H194.75l9.251-11-9.251-11h11.873Z" fill="url(#linear-gradient)"/>
+      <path id="Path_9427-3" data-name="Path 9427" d="M231.324,416.193l-5.9,7.023h-7.585l5.906-7.023-5.906-7.024h7.58Z" transform="translate(-12.163 -4.428)" opacity="0.3" fill="url(#linear-gradient-2)"/>
+      <path id="Path_9428-3" data-name="Path 9428" d="M228,414.618l-7.091,8.439H216.32l7.1-8.439-7.1-8.439H220.9Z" transform="translate(-11.364 -2.853)" fill="url(#linear-gradient-3)"/>
+    </g>
+  </g>
+</svg>
