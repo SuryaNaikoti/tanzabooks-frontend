@@ -4,7 +4,7 @@
     "slug": "tanzabook",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "../tanzabooks-frontend-expo/assets/favlogo1.png",
+    "icon": "./assets/favlogo.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -36,7 +36,7 @@
       }
     },
     "web": {
-      "favicon": "../tanzabooks-frontend-expo/assets/favlogo1.png"
+      "favicon": "./assets/favlogo.png"
     },
     "plugins": ["sentry-expo"]
   }
