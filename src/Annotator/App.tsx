@@ -18,7 +18,7 @@ import { Sidebar } from "./Sidebar";
 import axios from "axios";
 
 import "./style/App.css";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import {
   Image,
   ScrollView,
@@ -161,7 +161,7 @@ class App extends Component<{ props: any }, State> {
   getAnnotations() {
     const tanzabook_id = localStorage.getItem("tanzabook_id");
     axios
-      .get(`${NETWORK_URL}/tanzabook/${tanzabook_id}`, {
+      .get(`${API_BASE_URL}/api/tanzabook/${tanzabook_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         },
@@ -244,7 +244,7 @@ class App extends Component<{ props: any }, State> {
 
     axios
       .post(
-        `${NETWORK_URL}/annotation`,
+        `${API_BASE_URL}/api/annotation`,
         {
           tanzabook_id: this.tanzabook_id,
           annotation_json: {
@@ -347,7 +347,7 @@ class App extends Component<{ props: any }, State> {
     formData.append("type", "audio");
 
     axios
-      .post(`${NETWORK_URL}/upload`, formData, {
+      .post(`${API_BASE_URL}/api/upload`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         },
@@ -408,7 +408,7 @@ class App extends Component<{ props: any }, State> {
     formData.append("type", "audio");
 
     axios
-      .post(`${NETWORK_URL}/upload`, formData, {
+      .post(`${API_BASE_URL}/api/upload`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         },

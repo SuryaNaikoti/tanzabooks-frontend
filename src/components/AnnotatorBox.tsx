@@ -18,7 +18,7 @@ import SoundPlayer from "react-native-sound-player";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 
 export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
   console.log("Annotation Id ==>", id);
@@ -50,7 +50,7 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
   function discussComment() {
     axios({
       method: "post",
-      url: `${NETWORK_URL}/annotation/comment`,
+      url: `${API_BASE_URL}/api/annotation/comment`,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.auth_token}`,
@@ -73,7 +73,7 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
 
   const UpdateComment = () => {
     axios
-      .get(`${NETWORK_URL}/annotation/comment/${id}`, {
+      .get(`${API_BASE_URL}/api/annotation/comment/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -95,7 +95,7 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
     console.log("id:", id);
     var config = {
       method: "delete",
-      url: `${NETWORK_URL}/discussion/${id}`,
+      url: `${API_BASE_URL}/api/discussion/${id}`,
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         "Content-Type": "application/json",

@@ -18,7 +18,7 @@ import { Feather } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import { useNavigation } from "@react-navigation/core";
 import { SimpleLineIcons } from "@expo/vector-icons";
 
@@ -36,7 +36,7 @@ export const SampleBriefFolder = () => {
 
   useEffect(() => {
     axios
-      .get(`${NETWORK_URL}/sample-folder/${sampleFolderid}`)
+      .get(`${API_BASE_URL}/api/sample-folder/${sampleFolderid}`)
       .then((res) => {
         setData(res.data.data.data);
       })

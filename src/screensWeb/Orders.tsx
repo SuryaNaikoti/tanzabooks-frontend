@@ -31,7 +31,7 @@ import MoveUp from "../components/MoveUp";
 import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";

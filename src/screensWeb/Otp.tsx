@@ -17,7 +17,7 @@ import axios from "axios";
 import HeadShake from "react-reveal/HeadShake";
 // import { useDispatch, useSelector } from 'react-redux';
 // import { RootState } from '../reduxStore/store';
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 
 import { storeToken, userDetails } from "../reduxStore/actions";
 import { CommonActions } from "@react-navigation/native";
@@ -76,7 +76,7 @@ export default function Otp({
 
       axios({
         method: "post",
-        url: `${NETWORK_URL}/verify-mobile-otp`,
+        url: `${API_BASE_URL}/api/verify-mobile-otp`,
         headers: { "Content-Type": "application/json" },
         data: postBody,
       })
@@ -120,7 +120,7 @@ export default function Otp({
     };
     axios({
       method: "post",
-      url: `${NETWORK_URL}/forget-password`,
+      url: `${API_BASE_URL}/api/forget-password`,
       headers: { "Content-Type": "application/json" },
       data: postBody,
     })

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import { Dispatch } from "redux";
 
 export const USERNAME = "USERNAME";

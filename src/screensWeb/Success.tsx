@@ -16,7 +16,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import { storeToken, userDetails, username } from "../reduxStore/actions";
 import { CommonActions } from "@react-navigation/native";
 import { navigate } from "../utils/RootNavigation";

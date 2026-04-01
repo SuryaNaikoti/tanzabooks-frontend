@@ -21,7 +21,7 @@ import { storeToken, userDetails } from "../reduxStore/actions";
 import { CommonActions } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import Modal from "react-native-modal";
 import { useScrollPosition } from "../hooks/useScrollPosition";
 import { useNavigation } from "@react-navigation/core";

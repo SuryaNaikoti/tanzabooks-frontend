@@ -19,7 +19,7 @@ import * as Font from "expo-font";
 import Navbar from "../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import { storeToken, userDetails } from "../reduxStore/actions";
 import { useCallback } from "react";
 import Zoom from "react-reveal/Zoom";
@@ -72,7 +72,7 @@ export default function Subscription({ navigation }: any) {
 
   const tanzabook_detail = () => {
     axios
-      .get(`${NETWORK_URL}/dashboard`, {
+      .get(`${API_BASE_URL}/api/dashboard`, {
         headers: {
           "content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -91,7 +91,7 @@ export default function Subscription({ navigation }: any) {
   const verifyPayment = (response: any) => {
     axios({
       method: "post",
-      url: `${NETWORK_URL}/payment/verify-payment`,
+      url: `${API_BASE_URL}/api/payment/verify-payment`,
 
       data: {
         razorpay_payment_id: response.razorpay_payment_id,
@@ -123,7 +123,7 @@ export default function Subscription({ navigation }: any) {
   const basic = () => {
     axios({
       method: "post",
-      url: `${NETWORK_URL}/payment/create-order`,
+      url: `${API_BASE_URL}/api/payment/create-order`,
       data: {
         plan_id: 1,
       },
@@ -154,7 +154,7 @@ export default function Subscription({ navigation }: any) {
       return;
     }
 
-    const data = await fetch(`${NETWORK_URL}/payment/create-order`, {
+    const data = await fetch(`${API_BASE_URL}/api/payment/create-order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -173,7 +173,7 @@ export default function Subscription({ navigation }: any) {
       name: "Tanzabooks payments",
       description: "Buy me a coffee ☕️",
       image:
-        "http://localhost:19006/static/media/Grow%20up%201@2x.6089bc28.png",
+        "https://api.tanzabooks.com/logo.svg",
       handler: function (response: any) {
         console.log(JSON.stringify(response));
         verifyPayment(response);

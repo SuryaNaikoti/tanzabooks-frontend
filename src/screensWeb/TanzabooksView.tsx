@@ -21,7 +21,7 @@ import Card from "../components/Card";
 import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
-import { NETWORK_URL } from "../utils/config";
+import { API_BASE_URL } from "../utils/config";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
@@ -61,7 +61,7 @@ const TanzabooksView = ({ navigation }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       const result = axios
-        .get(`${NETWORK_URL}/tanzabook/14`, {
+        .get(`${API_BASE_URL}/api/tanzabook/14`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.auth_token}`,
