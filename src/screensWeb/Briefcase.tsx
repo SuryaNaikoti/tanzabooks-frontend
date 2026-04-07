@@ -34,7 +34,7 @@ import RenamePop from "../components/RenamePop";
 import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
@@ -105,7 +105,7 @@ const Briefcase = ({ navigation }: any) => {
 
   const getFolderWithId = () => {
     axios
-      .get(`${API_BASE_URL}/api/folder/${folder_id}`, {
+      .get(`${NETWORK_URL}/folder/${folder_id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -136,7 +136,7 @@ const Briefcase = ({ navigation }: any) => {
   const getUserData = (data: any) => {
     if (data.length > 2) {
       axios
-        .get(`${API_BASE_URL}/api/user?q=${data}`, {
+        .get(`${NETWORK_URL}/user?q=${data}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.auth_token}`,
@@ -165,7 +165,7 @@ const Briefcase = ({ navigation }: any) => {
       formData.append("folder_id", folder_id); // sending folder_id to store the tanza in a specific folder and folder_id coming from the localStorage
       axios
         .post(
-          `${API_BASE_URL}/api/tanzabook`,
+          `${NETWORK_URL}/tanzabook`,
           // {
           formData,
           // },
@@ -212,7 +212,7 @@ const Briefcase = ({ navigation }: any) => {
 
   const getFolders = () => {
     axios
-      .get(`${API_BASE_URL}/api/user/folders`, {
+      .get(`${NETWORK_URL}/user/folders`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -236,7 +236,7 @@ const Briefcase = ({ navigation }: any) => {
   const ShareMember = () => {
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/tanzabook/share`,
+      url: `${NETWORK_URL}/tanzabook/share`,
       data: {
         tanzabook_id: tanza_id,
         invite_user: selectedUserData.map((x: any) => {
@@ -273,7 +273,7 @@ const Briefcase = ({ navigation }: any) => {
     console.log("tanza_id", tanza_id);
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/tanzabook/move`,
+      url: `${NETWORK_URL}/tanzabook/move`,
 
       data: {
         tanzabook_id: tanza_id,
@@ -306,7 +306,7 @@ const Briefcase = ({ navigation }: any) => {
     setDeleting(true);
     axios({
       method: "delete",
-      url: `${API_BASE_URL}/api/tanzabook/${tanza_id}`,
+      url: `${NETWORK_URL}/tanzabook/${tanza_id}`,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.auth_token}`,
@@ -330,7 +330,7 @@ const Briefcase = ({ navigation }: any) => {
     console.log("Renaming tanzabook..." + tanza_id + "<<");
     axios({
       method: "patch",
-      url: `${API_BASE_URL}/api/tanzabook/` + tanza_id,
+      url: `${NETWORK_URL}/tanzabook/` + tanza_id,
       data: {
         name: r_name,
       },
@@ -370,7 +370,7 @@ const Briefcase = ({ navigation }: any) => {
   const callAddData = (searchText: any) => {
     console.log(searchText);
     return axios
-      .get(`${API_BASE_URL}/api/user?q=${searchText}`, {
+      .get(`${NETWORK_URL}/user?q=${searchText}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,

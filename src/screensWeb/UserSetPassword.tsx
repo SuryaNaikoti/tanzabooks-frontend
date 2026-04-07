@@ -16,7 +16,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { storeToken, userDetails } from "../reduxStore/actions";
 import { CommonActions, useFocusEffect } from "@react-navigation/native";
 import { Entypo } from "@expo/vector-icons";
@@ -45,7 +45,7 @@ export default function UserSetPassword({ navigation }: any) {
     console.log("token", token);
     console.log("phone_number", mobileNumber);
     axios
-      .post(`${API_BASE_URL}/api/institute/forget-password/reset`, {
+      .post(`${NETWORK_URL}/institute/forget-password/reset`, {
         reset_token: token,
         phone_number: mobileNumber,
         password: values.password1,

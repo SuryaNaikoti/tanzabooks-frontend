@@ -16,7 +16,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { storeToken, userDetails } from "../reduxStore/actions";
 import { CommonActions } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
@@ -81,8 +81,8 @@ export default function SignUp({ navigation }: any) {
       localStorage.setItem("mobile", postBody.mobile);
       axios({
         method: "post",
-        // url: `${API_BASE_URL}/api/user-signup`,
-        url: `${API_BASE_URL}/api/user-signup`,
+        // url: `${NETWORK_URL}/user-signup`,
+        url: `${NETWORK_URL}/user-signup`,
         headers: { "Content-Type": "application/json" },
         data: postBody,
       })

@@ -21,7 +21,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import {
   loginDetails,
   storeToken,
@@ -85,7 +85,7 @@ export default function Institute_Admin_Login({ navigation }: any) {
       };
       setLoading(true);
       axios
-        .post(`${API_BASE_URL}/api/user-login`, payload)
+        .post(`${NETWORK_URL}/user-login`, payload)
         .then((response) => {
           console.log("response:", response?.data?.user);
           window.localStorage.setItem("tbzToken", response.data.access_token);

@@ -6,7 +6,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { storeToken, userDetails } from "../reduxStore/actions";
 import { CommonActions } from "@react-navigation/native";
 import { useNavigation, useRoute } from "@react-navigation/core";
@@ -67,7 +67,7 @@ export default function Navbar({ navigation }: any) {
 
   const logOut = () => {
     axios
-      .get(`${API_BASE_URL}/api/user-logout`, {
+      .get(`${NETWORK_URL}/user-logout`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,

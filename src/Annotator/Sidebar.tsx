@@ -5,7 +5,7 @@ import type { IHighlight } from "react-pdf-highlighter";
 // import responsiveSide from './style/responseSide.css';
 // import './style/sidebar.css';
 import axios from "axios";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import {
   Dimensions,
   Text,
@@ -79,7 +79,7 @@ export function Sidebar({
     console.log("id:", id);
     var config = {
       method: "delete",
-      url: `${API_BASE_URL}/api/annotation/${id}`,
+      url: `${NETWORK_URL}/annotation/${id}`,
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         "Content-Type": "application/json",

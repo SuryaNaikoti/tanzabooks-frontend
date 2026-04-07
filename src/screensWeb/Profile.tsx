@@ -20,7 +20,7 @@ import Popup from "../components/Popup";
 import Card from "../components/Card";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -85,7 +85,7 @@ const Profile = () => {
 
   // React.useEffect(() => {
   //   axios
-  //     .post(`${API_BASE_URL}/api/password`, {
+  //     .post(`${NETWORK_URL}/password`, {
   //       headers: {
   //         'Content-Type': 'application/json',
   //         Authorization: `Bearer ${user.auth_token}`,
@@ -117,7 +117,7 @@ const Profile = () => {
   function changePass() {
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/user/password`,
+      url: `${NETWORK_URL}/user/password`,
       data: {
         current_password: currentPassword,
         password: password,
@@ -155,7 +155,7 @@ const Profile = () => {
     ) {
       axios({
         method: "PATCH",
-        url: `${API_BASE_URL}/api/user`,
+        url: `${NETWORK_URL}/user`,
         data: {
           user_name: firstName,
           email: Email,
@@ -204,7 +204,7 @@ const Profile = () => {
 
   const getUsersData = () => {
     axios
-      .get(`${API_BASE_URL}/api/user/view`, {
+      .get(`${NETWORK_URL}/user/view`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -223,7 +223,7 @@ const Profile = () => {
 
   const logOut = () => {
     axios
-      .get(`${API_BASE_URL}/api/user-logout`, {
+      .get(`${NETWORK_URL}/user-logout`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,

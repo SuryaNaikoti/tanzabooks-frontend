@@ -21,7 +21,7 @@ import { Popover } from "react-native-popable";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { RootState } from "../reduxStore/store";
 
 const optionsPerPage = [2, 3, 4];
@@ -48,7 +48,7 @@ const Listing = () => {
   useFocusEffect(
     React.useCallback(() => {
       axios
-        .get(`${API_BASE_URL}/api/institute/students`, {
+        .get(`${NETWORK_URL}/institute/students`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.auth_token}`,

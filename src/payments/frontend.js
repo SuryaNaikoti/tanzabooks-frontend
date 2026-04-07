@@ -2,7 +2,7 @@ const API_BASE_URL = "https://api.tanzabooks.com";
 
 export const createOrder = async (data) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/payment/create-order`, {
+    const response = await fetch(`${NETWORK_URL}/payment/create-order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export const createOrder = async (data) => {
 
 export const verifyPayment = async (data) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/payment/verify-payment`, {
+    const response = await fetch(`${NETWORK_URL}/payment/verify-payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

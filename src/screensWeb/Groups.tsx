@@ -24,7 +24,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { groupId, storeToken, userDetails } from "../reduxStore/actions";
 import RenamePop from "../components/RenamePop";
 import GroupCrPop from "../components/GroupCrPop";
@@ -79,7 +79,7 @@ export default function Groups({ navigation }: any) {
 
   const groupList = () => {
     axios
-      .get(`${API_BASE_URL}/api/user/groups`, {
+      .get(`${NETWORK_URL}/user/groups`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -101,7 +101,7 @@ export default function Groups({ navigation }: any) {
   const makeGroup = () => {
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/group`,
+      url: `${NETWORK_URL}/group`,
       data: {
         name: create,
       },
@@ -128,7 +128,7 @@ export default function Groups({ navigation }: any) {
 
     axios({
       method: "patch",
-      url: `${API_BASE_URL}/api/group/${editId}`,
+      url: `${NETWORK_URL}/group/${editId}`,
       data: {
         name: r_name,
       },
@@ -152,7 +152,7 @@ export default function Groups({ navigation }: any) {
   function createGroup() {
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/group`,
+      url: `${NETWORK_URL}/group`,
       data: {
         name: create,
       },
@@ -178,7 +178,7 @@ export default function Groups({ navigation }: any) {
     console.log("Group deleted..." + id + "<<");
     axios({
       method: "delete",
-      url: `${API_BASE_URL}/api/group/${id}`,
+      url: `${NETWORK_URL}/group/${id}`,
 
       headers: {
         "Content-Type": "application/json",
@@ -762,7 +762,7 @@ export default function Groups({ navigation }: any) {
               onPress={() => {
                 // axios({
                 //   method: "post",
-                //   url: `${API_BASE_URL}/api/group`,
+                //   url: `${NETWORK_URL}/group`,
                 //   data: {
                 //     name: create,
                 //   },
@@ -838,7 +838,7 @@ export default function Groups({ navigation }: any) {
             onPress={() => {
               axios({
                 method: "post",
-                url: `${API_BASE_URL}/api/group`,
+                url: `${NETWORK_URL}/group`,
                 data: {
                   name: create,
                 },

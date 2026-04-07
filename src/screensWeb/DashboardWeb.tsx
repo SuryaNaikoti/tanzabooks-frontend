@@ -40,7 +40,7 @@ import * as WebBrowser from "expo-web-browser";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import { API_BASE_URL } from "../utils/config";
+import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { storeToken, userDetails } from "../reduxStore/actions";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { CommonActions, useFocusEffect } from "@react-navigation/native";
@@ -124,7 +124,7 @@ export default function DashboardTeacher({ navigation }: any) {
   const basic = () => {
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/payment/create-order`,
+      url: `${NETWORK_URL}/payment/create-order`,
       data: {
         plan_id: 1,
       },
@@ -156,7 +156,7 @@ export default function DashboardTeacher({ navigation }: any) {
 
       axios
         .post(
-          `${API_BASE_URL}/api/tanzabook`,
+          `${NETWORK_URL}/tanzabook`,
           // {
           formData,
           // },
@@ -195,7 +195,7 @@ export default function DashboardTeacher({ navigation }: any) {
 
   const getFolders = () => {
     axios
-      .get(`${API_BASE_URL}/api/dashboard`, {
+      .get(`${NETWORK_URL}/dashboard`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
@@ -222,7 +222,7 @@ export default function DashboardTeacher({ navigation }: any) {
     }
     axios({
       method: "post",
-      url: `${API_BASE_URL}/api/folder`,
+      url: `${NETWORK_URL}/folder`,
       data: {
         name: pop,
       },
@@ -248,7 +248,7 @@ export default function DashboardTeacher({ navigation }: any) {
     console.log("deleting folder..." + id + "<<");
     axios({
       method: "delete",
-      url: `${API_BASE_URL}/api/folder/` + id,
+      url: `${NETWORK_URL}/folder/` + id,
 
       headers: {
         "Content-Type": "application/json",
@@ -269,7 +269,7 @@ export default function DashboardTeacher({ navigation }: any) {
     if (r_name !== "") {
       axios({
         method: "patch",
-        url: `${API_BASE_URL}/api/folder/${renameFolderId}`,
+        url: `${NETWORK_URL}/folder/${renameFolderId}`,
         data: {
           name: r_name,
         },
@@ -298,7 +298,7 @@ export default function DashboardTeacher({ navigation }: any) {
   useFocusEffect(
     React.useCallback(() => {
       axios
-        .get(`${API_BASE_URL}/api/user/folders`, {
+        .get(`${NETWORK_URL}/user/folders`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.auth_token}`,
@@ -330,7 +330,7 @@ export default function DashboardTeacher({ navigation }: any) {
 
   const getUsersData = () => {
     axios
-      .get(`${API_BASE_URL}/api/user/view`, {
+      .get(`${NETWORK_URL}/user/view`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.auth_token}`,
