@@ -83,10 +83,7 @@ export default function Otp({
         .then((response) => {
           console.log(response);
           console.log(response.data.data);
-          navigation.navigate("InstituteSetPassword", {
-            mobile: route?.params?.mobile,
-            token: response?.data?.data,
-          });
+          navigation.navigate('Dashboard');
         })
         .catch(function (error: any) {
           console.log(error.response);
