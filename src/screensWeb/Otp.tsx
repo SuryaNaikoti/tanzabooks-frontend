@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { scale, colors, device, wp, hp } from "../utils";
 import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
+import api from "../utils/api";
 import HeadShake from "react-reveal/HeadShake";
 // import { useDispatch, useSelector } from 'react-redux';
 // import { RootState } from '../reduxStore/store';
@@ -74,7 +74,7 @@ export default function Otp({
         otp: values.otp,
       };
 
-      axios({
+      api({
         method: "post",
         url: `${NETWORK_URL}/verify-mobile-otp`,
         headers: { "Content-Type": "application/json" },
@@ -115,7 +115,7 @@ export default function Otp({
       mobile: mobile_number,
       // otp:values.otp
     };
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/forget-password`,
       headers: { "Content-Type": "application/json" },

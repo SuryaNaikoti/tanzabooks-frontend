@@ -28,7 +28,7 @@ import useRazorpay from "react-razorpay";
 
 import { CommonActions } from "@react-navigation/native";
 import { navigate } from "../utils/RootNavigation";
-import axios from "axios";
+import api from "../utils/api";
 import { STORE_USER_DETAILS } from "../reduxStore/actions";
 import { userReducer } from "../reduxStore/reducers";
 import { useFocusEffect } from "@react-navigation/native";
@@ -75,7 +75,6 @@ export default function Subscription({ navigation }: any) {
       .get(`${NETWORK_URL}/dashboard`, {
         headers: {
           "content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((res) => {
@@ -89,7 +88,7 @@ export default function Subscription({ navigation }: any) {
   };
 
   const verifyPayment = (response: any) => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/payment/verify-payment`,
 
@@ -101,7 +100,6 @@ export default function Subscription({ navigation }: any) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -121,7 +119,7 @@ export default function Subscription({ navigation }: any) {
   };
 
   const basic = () => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/payment/create-order`,
       data: {
@@ -129,7 +127,6 @@ export default function Subscription({ navigation }: any) {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -158,7 +155,6 @@ export default function Subscription({ navigation }: any) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
       body: JSON.stringify({
         plan_id: 2,

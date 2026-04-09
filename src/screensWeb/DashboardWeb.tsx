@@ -37,7 +37,7 @@ import Pullup from "../components/Pullup";
 import RenamePop from "../components/RenamePop";
 import { scale, colors, device, wp, hp } from "../utils";
 import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
+import api from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
@@ -122,7 +122,7 @@ export default function DashboardTeacher({ navigation }: any) {
     setSearchQuery(query);
 
   const basic = () => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/payment/create-order`,
       data: {
@@ -130,7 +130,6 @@ export default function DashboardTeacher({ navigation }: any) {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -163,7 +162,6 @@ export default function DashboardTeacher({ navigation }: any) {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${user.auth_token}`,
             },
           }
         )
@@ -198,7 +196,6 @@ export default function DashboardTeacher({ navigation }: any) {
       .get(`${NETWORK_URL}/dashboard`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -220,11 +217,10 @@ export default function DashboardTeacher({ navigation }: any) {
     if (pop == "") {
       alert("please Enter the name of folder");
     }
-    axios.post(`${NETWORK_URL}/folder`, {
+    api.post(`${NETWORK_URL}/folder`, {
       name: pop,
     }, {
       headers: {
-        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`
       }
     })
       .then((response) => {
@@ -242,13 +238,12 @@ export default function DashboardTeacher({ navigation }: any) {
 
   function deleteFolder(id: any) {
     console.log("deleting folder..." + id + "<<");
-    axios({
+    api({
       method: "delete",
       url: `${NETWORK_URL}/folder/` + id,
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -263,7 +258,7 @@ export default function DashboardTeacher({ navigation }: any) {
   }
   function renameFolder() {
     if (r_name !== "") {
-      axios({
+      api({
         method: "patch",
         url: `${NETWORK_URL}/folder/${renameFolderId}`,
         data: {
@@ -272,7 +267,6 @@ export default function DashboardTeacher({ navigation }: any) {
 
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
         .then((response) => {
@@ -297,7 +291,6 @@ export default function DashboardTeacher({ navigation }: any) {
         .get(`${NETWORK_URL}/user/folders`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {
@@ -329,7 +322,6 @@ export default function DashboardTeacher({ navigation }: any) {
       .get(`${NETWORK_URL}/user/view`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {

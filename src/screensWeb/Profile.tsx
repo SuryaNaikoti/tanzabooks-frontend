@@ -22,7 +22,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { useFocusEffect } from "@react-navigation/native";
-import axios from "axios";
+import api from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { navigationRef } from "../utils/RootNavigation";
@@ -88,7 +88,6 @@ const Profile = () => {
   //     .post(`${NETWORK_URL}/password`, {
   //       headers: {
   //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${user.auth_token}`,
   //       },
   //       data:{
   //         "current_password":currentPassword,
@@ -115,7 +114,7 @@ const Profile = () => {
   // }, []);
 
   function changePass() {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/user/password`,
       data: {
@@ -125,7 +124,6 @@ const Profile = () => {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -153,7 +151,7 @@ const Profile = () => {
       university.length !== 0 &&
       Email.length !== 0
     ) {
-      axios({
+      api({
         method: "PATCH",
         url: `${NETWORK_URL}/user`,
         data: {
@@ -165,7 +163,6 @@ const Profile = () => {
 
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
         .then((res: any) => {
@@ -207,7 +204,6 @@ const Profile = () => {
       .get(`${NETWORK_URL}/user/view`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -226,7 +222,6 @@ const Profile = () => {
       .get(`${NETWORK_URL}/user-logout`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {

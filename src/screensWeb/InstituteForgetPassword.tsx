@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { scale, colors, device, wp, hp } from "../utils";
 import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
+import api from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
@@ -62,7 +62,7 @@ export default function InstituteForgetPassword({ navigation }: any) {
         mobile: values.mobile,
       };
       localStorage.setItem("mobile", values.mobile);
-      axios({
+      api({
         method: "post",
         url: `${NETWORK_URL}/forget-password`,
         headers: { "Content-Type": "application/json" },

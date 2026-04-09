@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { scale, colors, device, wp, hp } from "../utils";
 import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
+import api from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
@@ -68,7 +68,6 @@ export default function Navbar({ navigation }: any) {
       .get(`${NETWORK_URL}/user-logout`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {

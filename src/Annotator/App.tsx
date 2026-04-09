@@ -15,7 +15,7 @@ import "react-voice-recorder/dist/index.css";
 import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
 import { Sidebar } from "./Sidebar";
-import axios from "axios";
+import api from "../utils/api";
 
 import "./style/App.css";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
@@ -163,7 +163,6 @@ class App extends Component<{ props: any }, State> {
     axios
       .get(`${NETWORK_URL}/tanzabook/${tanzabook_id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         },
       })
       .then((result) => {
@@ -292,7 +291,6 @@ class App extends Component<{ props: any }, State> {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`,
           },
         }
       )
@@ -350,7 +348,6 @@ class App extends Component<{ props: any }, State> {
     axios
       .post(`${NETWORK_URL}/upload`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         },
       })
       .then((result) => {
@@ -411,7 +408,6 @@ class App extends Component<{ props: any }, State> {
     axios
       .post(`${NETWORK_URL}/upload`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
         },
       })
       .then((result) => {

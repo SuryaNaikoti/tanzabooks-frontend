@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../utils/api";
 import { API_BASE_URL } from "../utils/config";
 import { Dispatch } from "redux";
 

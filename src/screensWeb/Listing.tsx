@@ -20,7 +20,7 @@ import Card from "../components/Card";
 import { Popover } from "react-native-popable";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../utils/api";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { RootState } from "../reduxStore/store";
 
@@ -51,7 +51,6 @@ const Listing = () => {
         .get(`${NETWORK_URL}/institute/students`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {

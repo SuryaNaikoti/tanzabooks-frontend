@@ -22,7 +22,7 @@ import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
-import axios from "axios";
+import api from "../utils/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { getMediaLibraryPermissionsAsync } from "expo-image-picker";
@@ -64,7 +64,6 @@ const TanzabooksView = ({ navigation }: any) => {
         .get(`${NETWORK_URL}/tanzabook/14`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {

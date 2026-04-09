@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import { scale, colors, device, wp, hp } from "../utils";
 import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
+import api from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
@@ -74,7 +74,7 @@ export default function Institute_Admin_Login({ navigation }: any) {
 
       localStorage.removeItem("tbzToken");
 
-      const response = await axios.post(`${NETWORK_URL}/user-login`, {
+      const response = await api.post(`${NETWORK_URL}/user-login`, {
         mobile: values.mobile,
         password: values.password,
       });
@@ -90,7 +90,6 @@ export default function Institute_Admin_Login({ navigation }: any) {
         localStorage.setItem("tbzToken", token);
 
         // Set axios header globally
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         console.log("TOKEN SAVED:", typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null);
 

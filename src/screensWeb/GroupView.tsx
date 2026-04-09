@@ -32,7 +32,7 @@ import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
-import axios from "axios";
+import api from "../utils/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { getMediaLibraryPermissionsAsync } from "expo-image-picker";
@@ -109,7 +109,6 @@ const GroupView = ({ navigation }: any) => {
         .get(`${NETWORK_URL}/group/${group_id}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {
@@ -138,7 +137,6 @@ const GroupView = ({ navigation }: any) => {
         .get(`${NETWORK_URL}/user/folders`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {
@@ -160,7 +158,6 @@ const GroupView = ({ navigation }: any) => {
   //       {
   //         headers: {
   //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${user.auth_token}`,
   //         },
   //       }
   //     )
@@ -180,7 +177,6 @@ const GroupView = ({ navigation }: any) => {
         .get(`${NETWORK_URL}/user?q=${data}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {
@@ -211,7 +207,7 @@ const GroupView = ({ navigation }: any) => {
   });
 
   const addMember = () => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/group-member`,
       data: {
@@ -224,7 +220,6 @@ const GroupView = ({ navigation }: any) => {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -238,7 +233,7 @@ const GroupView = ({ navigation }: any) => {
       });
   };
   const ShareMember = () => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/tanzabook/share`,
       data: {
@@ -251,7 +246,6 @@ const GroupView = ({ navigation }: any) => {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -282,7 +276,6 @@ const GroupView = ({ navigation }: any) => {
       //     {
       //       headers: {
       //         "Content-Type": "multipart/form-data",
-      //         Authorization: `Bearer ${user.auth_token}`,
       //       },
       //     }
       //   )
@@ -311,7 +304,6 @@ const GroupView = ({ navigation }: any) => {
       .get(`${NETWORK_URL}/user?q=${searchText}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((res) => {

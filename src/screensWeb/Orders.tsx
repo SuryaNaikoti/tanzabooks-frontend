@@ -32,7 +32,7 @@ import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { API_BASE_URL } from "../utils/config";
-import axios from "axios";
+import api from "../utils/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { getMediaLibraryPermissionsAsync } from "expo-image-picker";

@@ -21,7 +21,7 @@ import Popup from "../components/Popup";
 import Pullup from "../components/Popup";
 import { scale, colors, device, wp, hp } from "../utils";
 import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
+import api from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
@@ -82,7 +82,6 @@ export default function Groups({ navigation }: any) {
       .get(`${NETWORK_URL}/user/groups`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -99,7 +98,7 @@ export default function Groups({ navigation }: any) {
   };
 
   const makeGroup = () => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/group`,
       data: {
@@ -107,7 +106,6 @@ export default function Groups({ navigation }: any) {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -126,7 +124,7 @@ export default function Groups({ navigation }: any) {
   function renameGroup() {
     console.log("Edit Id", editId);
 
-    axios({
+    api({
       method: "patch",
       url: `${NETWORK_URL}/group/${editId}`,
       data: {
@@ -135,7 +133,6 @@ export default function Groups({ navigation }: any) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -150,7 +147,7 @@ export default function Groups({ navigation }: any) {
   }
 
   function createGroup() {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/group`,
       data: {
@@ -158,7 +155,6 @@ export default function Groups({ navigation }: any) {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -176,13 +172,12 @@ export default function Groups({ navigation }: any) {
 
   function deleteGroup(id: any) {
     console.log("Group deleted..." + id + "<<");
-    axios({
+    api({
       method: "delete",
       url: `${NETWORK_URL}/group/${id}`,
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -760,7 +755,7 @@ export default function Groups({ navigation }: any) {
                 alignSelf: "center",
               }}
               onPress={() => {
-                // axios({
+                // api({
                 //   method: "post",
                 //   url: `${NETWORK_URL}/group`,
                 //   data: {
@@ -768,7 +763,6 @@ export default function Groups({ navigation }: any) {
                 //   },
                 //   headers: {
                 //     "Content-Type": "application/json",
-                //     Authorization: `Bearer ${user.auth_token}`,
                 //   },
                 // })
                 //   .then((response) => {
@@ -836,7 +830,7 @@ export default function Groups({ navigation }: any) {
               alignSelf: "center",
             }}
             onPress={() => {
-              axios({
+              api({
                 method: "post",
                 url: `${NETWORK_URL}/group`,
                 data: {
@@ -844,7 +838,6 @@ export default function Groups({ navigation }: any) {
                 },
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${user.auth_token}`,
                 },
               })
                 .then((response) => {

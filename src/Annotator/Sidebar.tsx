@@ -4,7 +4,7 @@ import { wp, hp, scale } from "../utils";
 import type { IHighlight } from "react-pdf-highlighter";
 // import responsiveSide from './style/responseSide.css';
 // import './style/sidebar.css';
-import axios from "axios";
+import api from "../utils/api";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import {
   Dimensions,
@@ -81,13 +81,12 @@ export function Sidebar({
       method: "delete",
       url: `${NETWORK_URL}/annotation/${id}`,
       headers: {
-        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`,
         "Content-Type": "application/json",
       },
       // data: payload,
     };
 
-    axios(config)
+    api(config)
       .then(function (response) {
         window.location.reload();
       })

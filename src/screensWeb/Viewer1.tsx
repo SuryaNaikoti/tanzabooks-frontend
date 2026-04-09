@@ -17,7 +17,7 @@ import Homenav from "../components/Homenav";
 import { colors, hp, wp } from "../utils";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
-import axios from "axios";
+import api from "../utils/api";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import Modal from "react-native-modal";
 import { useScrollPosition } from "../hooks/useScrollPosition";
@@ -66,7 +66,6 @@ export const Viewer1 = () => {
       .get(`${NETWORK_URL}/tanzabook/${tanzabook_id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -83,7 +82,7 @@ export const Viewer1 = () => {
   };
 
   function discussComment(id: any) {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/discussion`,
       data: {
@@ -92,7 +91,6 @@ export const Viewer1 = () => {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -112,7 +110,6 @@ export const Viewer1 = () => {
       .get(`${NETWORK_URL}/tanzabook/discussion/${tanzabook_id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {

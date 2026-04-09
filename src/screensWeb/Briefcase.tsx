@@ -35,7 +35,7 @@ import { Popover } from "react-native-popable";
 import { Image } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
-import axios from "axios";
+import api from "../utils/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxStore/store";
 import { navigationRef } from "../utils/RootNavigation";
@@ -108,7 +108,6 @@ const Briefcase = ({ navigation }: any) => {
       .get(`${NETWORK_URL}/folder/${folder_id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -139,7 +138,6 @@ const Briefcase = ({ navigation }: any) => {
         .get(`${NETWORK_URL}/user?q=${data}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
           },
         })
         .then((response) => {
@@ -172,7 +170,6 @@ const Briefcase = ({ navigation }: any) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${user.auth_token}`,
             },
           }
         )
@@ -215,7 +212,6 @@ const Briefcase = ({ navigation }: any) => {
       .get(`${NETWORK_URL}/user/folders`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -234,7 +230,7 @@ const Briefcase = ({ navigation }: any) => {
   };
 
   const ShareMember = () => {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/tanzabook/share`,
       data: {
@@ -247,7 +243,6 @@ const Briefcase = ({ navigation }: any) => {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -271,7 +266,7 @@ const Briefcase = ({ navigation }: any) => {
 
   const moveFolder = () => {
     console.log("tanza_id", tanza_id);
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/tanzabook/move`,
 
@@ -283,7 +278,6 @@ const Briefcase = ({ navigation }: any) => {
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -304,12 +298,11 @@ const Briefcase = ({ navigation }: any) => {
     console.log("tanza_id", id);
     // alert("You are deleting your Tanzabook");
     setDeleting(true);
-    axios({
+    api({
       method: "delete",
       url: `${NETWORK_URL}/tanzabook/${tanza_id}`,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -328,7 +321,7 @@ const Briefcase = ({ navigation }: any) => {
 
   function renameTanza(id: any) {
     console.log("Renaming tanzabook..." + tanza_id + "<<");
-    axios({
+    api({
       method: "patch",
       url: `${NETWORK_URL}/tanzabook/` + tanza_id,
       data: {
@@ -337,7 +330,6 @@ const Briefcase = ({ navigation }: any) => {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
     })
       .then((response) => {
@@ -373,7 +365,6 @@ const Briefcase = ({ navigation }: any) => {
       .get(`${NETWORK_URL}/user?q=${searchText}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((res) => {

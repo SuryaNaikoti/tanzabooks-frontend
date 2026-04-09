@@ -17,7 +17,7 @@ import { colors, hp, scale, wp } from "../utils";
 import { Feather } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import axios from "axios";
+import api from "../utils/api";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 import { useNavigation } from "@react-navigation/core";
 import { SimpleLineIcons } from "@expo/vector-icons";

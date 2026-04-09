@@ -17,7 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import SoundPlayer from "react-native-sound-player";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import axios from "axios";
+import api from "../utils/api";
 import { API_BASE_URL, NETWORK_URL } from "../utils/config";
 
 export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
@@ -48,12 +48,11 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
   // }
 
   function discussComment() {
-    axios({
+    api({
       method: "post",
       url: `${NETWORK_URL}/annotation/comment`,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
       },
       data: {
         anotation_id: id,
@@ -76,7 +75,6 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
       .get(`${NETWORK_URL}/annotation/comment/${id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.auth_token}`,
         },
       })
       .then((response) => {
@@ -97,12 +95,11 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
       method: "delete",
       url: `${NETWORK_URL}/discussion/${id}`,
       headers: {
-        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`,
         "Content-Type": "application/json",
       },
     };
 
-    axios(config)
+    api(config)
       .then(function (response) {
         console.log("Delete Res ==>", response);
         setDelRes(response);
