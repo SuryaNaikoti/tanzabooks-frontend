@@ -66,6 +66,45 @@ export default function Institute_Admin_Login({ navigation }: any) {
     }
   }, []);
 
+
+  const handleLogin = async (values: any) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      localStorage.removeItem("tbzToken");
+
+      const response = await axios.post(`${NETWORK_URL}/user-login`, {
+        mobile: values.mobile,
+        password: values.password,
+      });
+
+      console.log("LOGIN RESPONSE:", response);
+
+      if (response?.data?.success && response?.data?.data?.token) {
+        const token = response.data.data.token;
+
+        localStorage.setItem("tbzToken", token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        navigation.navigate("Dashboard");
+      } else {
+        setError(response?.data?.message || "Login failed");
+      }
+
+    } catch (error: any) {
+      console.log("LOGIN ERROR:", error);
+
+      if (error?.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Network or server error");
+      }
+
+    } finally {
+      setLoading(false);
+    }
+  };
   const {
     values,
     touched,
@@ -78,50 +117,7 @@ export default function Institute_Admin_Login({ navigation }: any) {
   } = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
-      const payload = {
-        mobile: values.mobile,
-        password: values.password,
-      };
-      setLoading(true);
-      axios
-        .post(`${NETWORK_URL}/user-login`, payload)
-        .then((response) => {
-          console.log("response:", response?.data?.user);
-          window.localStorage.setItem("tbzToken", response.data.access_token);
-          dispatch(storeToken(response.data.access_token));
-
-          dispatch(username(response.data.access_token));
-
-          var temp = JSON.parse(JSON.stringify(response.data.user));
-
-          dispatch(loginDetails(temp));
-          if (
-            response.data.user.subscription_plan == null ||
-            response.data.user.subscription_plan == ""
-          ) {
-            window.location.href = "subscription";
-          } else {
-            navigation.replace("DashboardWeb");
-          }
-          resetForm();
-          setLoading(false);
-        })
-        .catch(function (error: any) {
-          console.log(error.response);
-          Sentry.captureException(error);
-          // resetForm();
-          setError(error.response.data.message);
-          // navigation.navigate("forget-password", {
-          //   telephone: error.response.data.error.telephone,
-          //   from: "register",
-          // });
-          // setTimeout(() => {
-          //   navigation.navigate("InstituteForgetPassword");
-          // }, 5000);
-          setProcessing(false);
-        });
-    },
+    onSubmit: (values) => handleLogin(values),
   });
 
   return (
