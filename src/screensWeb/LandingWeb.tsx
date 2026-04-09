@@ -86,16 +86,15 @@ export default function Institute_Admin_Login({ navigation }: any) {
 
         console.log("TOKEN RECEIVED:", token);
 
-        // Store token
+        // Store token correctly
         localStorage.setItem("tbzToken", token);
 
         // Set axios header globally
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        // Verify storage
-        console.log("STORED TOKEN:", localStorage.getItem("tbzToken"));
+        console.log("TOKEN SAVED:", localStorage.getItem("tbzToken"));
 
-        // Navigate
+        // Navigate to dashboard
         navigation.navigate("Dashboard");
       } else {
         setError(response?.data?.message || "Login failed");
