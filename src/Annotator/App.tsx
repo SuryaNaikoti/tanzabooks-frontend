@@ -291,7 +291,8 @@ class App extends Component<{ props: any }, State> {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`,
           },
         }
       )

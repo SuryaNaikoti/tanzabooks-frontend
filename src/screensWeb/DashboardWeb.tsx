@@ -113,7 +113,7 @@ export default function DashboardTeacher({ navigation }: any) {
   };
 
   useEffect(() => {
-    if (window.localStorage.getItem("tbzToken") === null) {
+    if ((typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null) === null) {
     }
     basic();
   }, []);
@@ -220,16 +220,12 @@ export default function DashboardTeacher({ navigation }: any) {
     if (pop == "") {
       alert("please Enter the name of folder");
     }
-    axios({
-      method: "post",
-      url: `${NETWORK_URL}/folder`,
-      data: {
-        name: pop,
-      },
+    axios.post(`${NETWORK_URL}/folder`, {
+      name: pop,
+    }, {
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.auth_token}`,
-      },
+        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`
+      }
     })
       .then((response) => {
         window.location.reload();

@@ -24,8 +24,8 @@ export default function Navbar({ navigation }: any) {
 
   // useEffect(() => {
   //   if (
-  //     window.localStorage.getItem("tbzToken") === undefined &&
-  //     window.localStorage.getItem("tbzToken") === null
+  //     (typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null) === undefined &&
+  //     (typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null) === null
   //   ) {
   //     console.log('tbzToken')
   //     window.location.href = '/landing'
@@ -35,10 +35,8 @@ export default function Navbar({ navigation }: any) {
   // private routing
 
   useEffect(() => {
-    // alert(window.location.href.toString());
-
     if (
-      window.localStorage.getItem("tbzToken") === null &&
+      (typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null) === null &&
       !window.location.href.toString().includes("viewer")
     ) {
       logOut();

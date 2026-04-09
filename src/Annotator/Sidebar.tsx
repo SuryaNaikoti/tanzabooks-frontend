@@ -81,7 +81,7 @@ export function Sidebar({
       method: "delete",
       url: `${NETWORK_URL}/annotation/${id}`,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
+        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`,
         "Content-Type": "application/json",
       },
       // data: payload,

@@ -61,7 +61,7 @@ export default function Institute_Admin_Login({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (window.localStorage.getItem("tbzToken") !== null) {
+    if ((typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null) !== null) {
       window.location.href = "/dashboard";
     }
   }, []);
@@ -90,12 +90,12 @@ export default function Institute_Admin_Login({ navigation }: any) {
         localStorage.setItem("tbzToken", token);
 
         // Set axios header globally
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-        console.log("TOKEN SAVED:", localStorage.getItem("tbzToken"));
+        console.log("TOKEN SAVED:", typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null);
 
         // Navigate to dashboard
-        navigation.navigate("Dashboard");
+        window.location.href = "/dashboard";
       } else {
         setError(response?.data?.message || "Login failed");
       }

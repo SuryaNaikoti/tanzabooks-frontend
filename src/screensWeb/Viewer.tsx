@@ -149,7 +149,7 @@ const Viewer = () => {
       method: "delete",
       url: `${NETWORK_URL}/discussion/${id}`,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("tbzToken")}`,
+        Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null}`,
         "Content-Type": "application/json",
       },
     };
