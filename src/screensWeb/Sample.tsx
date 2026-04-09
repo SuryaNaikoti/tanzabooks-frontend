@@ -34,7 +34,7 @@ const Sample = () => {
   console.log(data);
 
   useEffect(() => {
-    axios
+    api
       .get(`${NETWORK_URL}/sample-folders`)
       .then((res) => {
         setData(res.data.data.data);

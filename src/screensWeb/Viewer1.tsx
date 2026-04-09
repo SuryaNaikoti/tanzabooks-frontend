@@ -62,7 +62,7 @@ export const Viewer1 = () => {
   }
 
   const ViewTanzabook = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/tanzabook/${tanzabook_id}`, {
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export const Viewer1 = () => {
   }
 
   const UpdateComment = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/tanzabook/discussion/${tanzabook_id}`, {
         headers: {
           "Content-Type": "application/json",

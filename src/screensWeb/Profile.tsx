@@ -84,7 +84,7 @@ const Profile = () => {
   const dispatch = useDispatch<any>();
 
   // React.useEffect(() => {
-  //   axios
+  //   api
   //     .post(`${NETWORK_URL}/password`, {
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ const Profile = () => {
   }, [patchRes]);
 
   const getUsersData = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/user/view`, {
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +218,7 @@ const Profile = () => {
   };
 
   const logOut = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/user-logout`, {
         headers: {
           "Content-Type": "application/json",

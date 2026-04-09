@@ -60,7 +60,7 @@ const TanzabooksView = ({ navigation }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      const result = axios
+      const result = api
         .get(`${NETWORK_URL}/tanzabook/14`, {
           headers: {
             "Content-Type": "application/json",

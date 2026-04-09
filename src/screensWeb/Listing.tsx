@@ -47,7 +47,7 @@ const Listing = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      axios
+      api
         .get(`${NETWORK_URL}/institute/students`, {
           headers: {
             "Content-Type": "application/json",

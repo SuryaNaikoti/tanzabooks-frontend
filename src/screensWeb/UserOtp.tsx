@@ -44,7 +44,7 @@ export default function SignUp({ navigation }: any) {
 
     const pickerRef = useRef();
 
-    axios
+    api
       .post(`${NETWORK_URL}/institute/login`, {
         email: values.login,
         password: values.password,

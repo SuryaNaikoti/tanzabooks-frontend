@@ -71,7 +71,7 @@ export default function Subscription({ navigation }: any) {
   console.log("share", share);
 
   const tanzabook_detail = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/dashboard`, {
         headers: {
           "content-Type": "application/json",

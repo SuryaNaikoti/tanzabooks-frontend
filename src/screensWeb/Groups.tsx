@@ -78,7 +78,7 @@ export default function Groups({ navigation }: any) {
   );
 
   const groupList = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/user/groups`, {
         headers: {
           "Content-Type": "application/json",

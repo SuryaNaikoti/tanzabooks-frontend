@@ -160,7 +160,7 @@ class App extends Component<{ props: any }, State> {
 
   getAnnotations() {
     const tanzabook_id = localStorage.getItem("tanzabook_id");
-    axios
+    api
       .get(`${NETWORK_URL}/tanzabook/${tanzabook_id}`, {
         headers: {
         },
@@ -241,7 +241,7 @@ class App extends Component<{ props: any }, State> {
 
     var id = getNextId();
 
-    axios
+    api
       .post(
         `${NETWORK_URL}/annotation`,
         {
@@ -345,7 +345,7 @@ class App extends Component<{ props: any }, State> {
     formData.append("file", file);
     formData.append("type", "audio");
 
-    axios
+    api
       .post(`${NETWORK_URL}/upload`, formData, {
         headers: {
         },
@@ -405,7 +405,7 @@ class App extends Component<{ props: any }, State> {
     formData.append("file", this.state.setAudioFile);
     formData.append("type", "audio");
 
-    axios
+    api
       .post(`${NETWORK_URL}/upload`, formData, {
         headers: {
         },

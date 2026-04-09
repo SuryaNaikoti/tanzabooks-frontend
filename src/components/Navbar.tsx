@@ -64,7 +64,7 @@ export default function Navbar({ navigation }: any) {
   }
 
   const logOut = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/user-logout`, {
         headers: {
           "Content-Type": "application/json",

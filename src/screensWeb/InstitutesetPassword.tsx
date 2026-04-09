@@ -69,7 +69,7 @@ export default function InstitutesetPassword({
         console.log("token", token);
         console.log("phone_number", route.params.mobile);
         // console.log(reset_token)
-        axios
+        api
           .post(`${NETWORK_URL}/create-password`, {
             reset_token: route.params.token,
             mobile: mobile_number,

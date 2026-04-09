@@ -35,7 +35,7 @@ export const SampleBriefFolder = () => {
   console.log(Path);
 
   useEffect(() => {
-    axios
+    api
       .get(`${NETWORK_URL}/sample-folder/${sampleFolderid}`)
       .then((res) => {
         setData(res.data.data.data);

@@ -153,7 +153,7 @@ export default function DashboardTeacher({ navigation }: any) {
       formData.append("folder_id", setFolder_id);
       formData.append("type", "folder");
 
-      axios
+      api
         .post(
           `${NETWORK_URL}/tanzabook`,
           // {
@@ -192,7 +192,7 @@ export default function DashboardTeacher({ navigation }: any) {
   }, [postRes]);
 
   const getFolders = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/dashboard`, {
         headers: {
           "Content-Type": "application/json",
@@ -287,7 +287,7 @@ export default function DashboardTeacher({ navigation }: any) {
 
   useFocusEffect(
     React.useCallback(() => {
-      axios
+      api
         .get(`${NETWORK_URL}/user/folders`, {
           headers: {
             "Content-Type": "application/json",
@@ -318,7 +318,7 @@ export default function DashboardTeacher({ navigation }: any) {
   }, []);
 
   const getUsersData = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/user/view`, {
         headers: {
           "Content-Type": "application/json",

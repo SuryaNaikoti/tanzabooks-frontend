@@ -104,7 +104,7 @@ const Briefcase = ({ navigation }: any) => {
   console.log("folder_id", folder_id);
 
   const getFolderWithId = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/folder/${folder_id}`, {
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const Briefcase = ({ navigation }: any) => {
 
   const getUserData = (data: any) => {
     if (data.length > 2) {
-      axios
+      api
         .get(`${NETWORK_URL}/user?q=${data}`, {
           headers: {
             "Content-Type": "application/json",
@@ -161,7 +161,7 @@ const Briefcase = ({ navigation }: any) => {
       formData.append("file", files[0]);
       // formData.append("folder_id", setFolder_id); // commented select tag below,where we select the name of the folder.
       formData.append("folder_id", folder_id); // sending folder_id to store the tanza in a specific folder and folder_id coming from the localStorage
-      axios
+      api
         .post(
           `${NETWORK_URL}/tanzabook`,
           // {
@@ -208,7 +208,7 @@ const Briefcase = ({ navigation }: any) => {
   );
 
   const getFolders = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/user/folders`, {
         headers: {
           "Content-Type": "application/json",
@@ -361,7 +361,7 @@ const Briefcase = ({ navigation }: any) => {
 
   const callAddData = (searchText: any) => {
     console.log(searchText);
-    return axios
+    return api
       .get(`${NETWORK_URL}/user?q=${searchText}`, {
         headers: {
           "Content-Type": "application/json",

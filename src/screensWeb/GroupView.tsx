@@ -105,7 +105,7 @@ const GroupView = ({ navigation }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      const result = axios
+      const result = api
         .get(`${NETWORK_URL}/group/${group_id}`, {
           headers: {
             "Content-Type": "application/json",
@@ -133,7 +133,7 @@ const GroupView = ({ navigation }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      axios
+      api
         .get(`${NETWORK_URL}/user/folders`, {
           headers: {
             "Content-Type": "application/json",
@@ -150,7 +150,7 @@ const GroupView = ({ navigation }: any) => {
   );
 
   // const groupData = () => {
-  //   axios
+  //   api
   //     .get(
   //       `${NETWORK_URL}/group/${new URLSearchParams(
   //         window.location.search
@@ -173,7 +173,7 @@ const GroupView = ({ navigation }: any) => {
 
   const getUserData = (data: any) => {
     if (data.length > 2) {
-      axios
+      api
         .get(`${NETWORK_URL}/user?q=${data}`, {
           headers: {
             "Content-Type": "application/json",
@@ -267,7 +267,7 @@ const GroupView = ({ navigation }: any) => {
 
       // console.log("Form Data", formData)
       setVisiblePop(false);
-      // axios
+      // api
       //   .post(
       //     `${NETWORK_URL}/tanzabook`,
       //     // {
@@ -300,7 +300,7 @@ const GroupView = ({ navigation }: any) => {
 
   const callAddData = (searchText: any) => {
     console.log(searchText);
-    return axios
+    return api
       .get(`${NETWORK_URL}/user?q=${searchText}`, {
         headers: {
           "Content-Type": "application/json",

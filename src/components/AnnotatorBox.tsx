@@ -71,7 +71,7 @@ export const AnnotatorBox = ({ onClose, userName, audio, id }: any) => {
   }
 
   const UpdateComment = () => {
-    axios
+    api
       .get(`${NETWORK_URL}/annotation/comment/${id}`, {
         headers: {
           "Content-Type": "application/json",

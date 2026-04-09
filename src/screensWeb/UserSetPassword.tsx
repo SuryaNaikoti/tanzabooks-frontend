@@ -44,7 +44,7 @@ export default function UserSetPassword({ navigation }: any) {
 
     console.log("token", token);
     console.log("phone_number", mobileNumber);
-    axios
+    api
       .post(`${NETWORK_URL}/institute/forget-password/reset`, {
         reset_token: token,
         phone_number: mobileNumber,

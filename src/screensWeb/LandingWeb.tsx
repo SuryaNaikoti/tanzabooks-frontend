@@ -89,7 +89,7 @@ export default function Institute_Admin_Login({ navigation }: any) {
         // Store token correctly
         localStorage.setItem("tbzToken", token);
 
-        // Set axios header globally
+        // Set api header globally
 
         console.log("TOKEN SAVED:", typeof window !== "undefined" ? localStorage.getItem("tbzToken") : null);
 
