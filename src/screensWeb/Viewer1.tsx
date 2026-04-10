@@ -388,6 +388,7 @@ export const Viewer1 = () => {
                 modalVisible={modalVisible1}
                 setModalVisible={() => setmodalVisible1(!modalVisible1)}
                 url={pdfUrl}
+                folderId={tanzabook_id}
               />
             </View>
           </View>
@@ -415,6 +416,7 @@ export const Viewer1 = () => {
                 modalVisible={modalVisible1}
                 setModalVisible={() => setmodalVisible1(!modalVisible1)}
                 url={pdfUrl}
+                folderId={tanzabook_id}
               />
 
               <TouchableOpacity

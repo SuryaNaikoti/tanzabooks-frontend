@@ -476,6 +476,7 @@ const Viewer = () => {
                 setModalVisible={() => setmodalVisible1(!modalVisible1)}
                 setLoading={(data: any) => setLoader(data)}
                 url={pdfUrl}
+                folderId={tanzabook_id}
               />
             </View>
           </View>
@@ -506,6 +507,7 @@ const Viewer = () => {
                 setModalVisible={() => setmodalVisible1(!modalVisible1)}
                 url={pdfUrl}
                 setLoading={(data) => setLoader(data)}
+                folderId={tanzabook_id}
               />
 
               <TouchableOpacity

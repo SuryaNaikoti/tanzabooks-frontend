@@ -345,7 +345,12 @@ class App extends Component<{ props: any }, State> {
     console.log(comment, "comment");
 
     formData.append("file", file);
-    formData.append("type", "audio");
+    formData.append("folder_id", String(this.props.folderId));
+
+    console.log("UPLOAD PAYLOAD:", {
+      file: file?.name,
+      folder_id: this.props.folderId
+    });
 
     try {
       const result = await api.post("/upload", formData);
@@ -404,7 +409,12 @@ class App extends Component<{ props: any }, State> {
     let formData = new FormData();
 
     formData.append("file", this.state.setAudioFile);
-    formData.append("type", "audio");
+    formData.append("folder_id", String(this.props.folderId));
+
+    console.log("UPLOAD PAYLOAD:", {
+      file: this.state.setAudioFile?.name,
+      folder_id: this.props.folderId
+    });
 
     try {
       const result = await api.post("/upload", formData);
