@@ -161,21 +161,28 @@ export default function DashboardTeacher({ navigation }: any) {
       api
         .post("/tanzabook", formData)
         .then((response) => {
-          console.log("tanzabook", response);
-          localStorage.setItem("tanzabook_id", response.data.data.folder_id);
-          // alert("book-created");
-          setFolder(!folder);
-          setVisiblePop(!visiblePop);
-          handleRemove();
-          setFile_name("");
-          alert("Tanzabook Created Succesfully");
-          window.location.reload();
-        })
+          console.log("UPLOAD RESPONSE:", response.data);
 
-        .catch(function (error: any) {
+          if (response.data && response.data.success === true) {
+            localStorage.setItem("tanzabook_id", response.data.data.folder_id);
+            setFolder(!folder);
+            setVisiblePop(!visiblePop);
+            handleRemove();
+            setFile_name("");
+            alert("Tanzabook Created Succesfully");
+            window.location.reload();
+          } else {
+            setCreateLoad(false);
+            console.error("Upload failed:", response.data);
+            alert(response.data?.message || "Upload failed");
+            return;
+          }
+        })
+        .catch((err) => {
           setCreateLoad(false);
-          console.log("error:", error);
-          Sentry.captureException(error);
+          console.error("UPLOAD ERROR:", err.response?.data || err);
+          alert(err.response?.data?.message || "Upload failed");
+          Sentry.captureException(err);
         });
     } else {
       alert("Please Fill All Fields");

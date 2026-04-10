@@ -170,26 +170,24 @@ const Briefcase = ({ navigation }: any) => {
       api
         .post("/tanzabook", formData)
         .then((response) => {
-          // console.log(JSON.stringify(response.data));
+          console.log("UPLOAD RESPONSE:", response.data);
 
-          // console.log("book-created");
-          setVisiblePop(!visiblePop);
-
-          // navigation.navigate("Viewer", {
-          //   tanzabook_id: elem1.id,
-          // });
-          getFolderWithId();
-          getFolders();
-          alert("Tanzabook Created Succesfully");
-          window.location.reload();
-          // console.log(JSON.stringify(response.data));
+          if (response.data && response.data.success === true) {
+            setVisiblePop(!visiblePop);
+            getFolderWithId();
+            getFolders();
+            alert("Tanzabook Created Succesfully");
+            window.location.reload();
+          } else {
+            console.error("Upload failed:", response.data);
+            alert(response.data?.message || "Upload failed");
+            return;
+          }
         })
-
-        .catch(function (error: any) {
-          // console.log(JSON.stringify(error.response.data));
-          //   setError(error.response.data.error);
-          console.log(error);
-          Sentry.captureException(error);
+        .catch((err) => {
+          console.error("UPLOAD ERROR:", err.response?.data || err);
+          alert(err.response?.data?.message || "Upload failed");
+          Sentry.captureException(err);
         });
     } else {
       alert("Please Fill Required Fields");
