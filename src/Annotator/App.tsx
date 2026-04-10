@@ -348,6 +348,7 @@ class App extends Component<{ props: any }, State> {
     api
       .post(`${NETWORK_URL}/upload`, formData, {
         headers: {
+          "Content-Type": "multipart/form-data",
         },
       })
       .then((result) => {
@@ -408,6 +409,7 @@ class App extends Component<{ props: any }, State> {
     api
       .post(`${NETWORK_URL}/upload`, formData, {
         headers: {
+          "Content-Type": "multipart/form-data",
         },
       })
       .then((result) => {
