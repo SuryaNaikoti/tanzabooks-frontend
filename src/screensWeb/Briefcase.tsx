@@ -156,23 +156,19 @@ const Briefcase = ({ navigation }: any) => {
     // modifications removed ->setFolder_id !== "" &&
     setCreateLoad(true);
     if (file_name !== "" && files.length > 0) {
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("name", file_name);
+      formData.append("folder_id", String(folder_id));
       formData.append("file", files[0]);
-      // formData.append("folder_id", setFolder_id); // commented select tag below,where we select the name of the folder.
-      formData.append("folder_id", folder_id); // sending folder_id to store the tanza in a specific folder and folder_id coming from the localStorage
+
+      console.log("TANZABOOK PAYLOAD:", {
+        name: file_name,
+        folder_id: String(folder_id),
+        file: files[0]?.name
+      });
+
       api
-        .post(
-          `${NETWORK_URL}/tanzabook`,
-          // {
-          formData,
-          // },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        )
+        .post("/tanzabook", formData)
         .then((response) => {
           // console.log(JSON.stringify(response.data));
 

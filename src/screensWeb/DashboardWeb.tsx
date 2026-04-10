@@ -147,24 +147,19 @@ export default function DashboardTeacher({ navigation }: any) {
   const createTanza = () => {
     if (setFolder_id !== "" && file_name !== "" && files.length > 0) {
       setCreateLoad(true);
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("name", file_name);
+      formData.append("folder_id", String(setFolder_id));
       formData.append("file", files[0]);
-      formData.append("folder_id", setFolder_id);
-      formData.append("type", "folder");
+
+      console.log("TANZABOOK PAYLOAD:", {
+        name: file_name,
+        folder_id: String(setFolder_id),
+        file: files[0]?.name
+      });
 
       api
-        .post(
-          `${NETWORK_URL}/tanzabook`,
-          // {
-          formData,
-          // },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        )
+        .post("/tanzabook", formData)
         .then((response) => {
           console.log("tanzabook", response);
           localStorage.setItem("tanzabook_id", response.data.data.folder_id);
