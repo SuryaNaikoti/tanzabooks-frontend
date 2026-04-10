@@ -348,11 +348,7 @@ class App extends Component<{ props: any }, State> {
     formData.append("type", "audio");
 
     try {
-      const result = await api.post(`${NETWORK_URL}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const result = await api.post("/upload", formData);
 
       if (result.status === 201) {
         console.log(result, "audioFile");
@@ -365,7 +361,7 @@ class App extends Component<{ props: any }, State> {
         }, 1000);
       }
     } catch (error: any) {
-      console.log(error?.response?.data, "error for Unaunthicated");
+      console.log("UPLOAD ERROR FULL:", error.response);
       Sentry.captureEvent(error);
     } finally {
       this.setState({ uploadLoader: false });
@@ -411,11 +407,7 @@ class App extends Component<{ props: any }, State> {
     formData.append("type", "audio");
 
     try {
-      const result = await api.post(`${NETWORK_URL}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const result = await api.post("/upload", formData);
 
       if (result.status === 201) {
         this.setState({
@@ -427,7 +419,7 @@ class App extends Component<{ props: any }, State> {
         }, 1000);
       }
     } catch (error: any) {
-      console.log(error);
+      console.log("UPLOAD ERROR FULL:", error.response);
       Sentry.captureEvent(error);
     } finally {
       this.setState({ uploadLoader: false });
