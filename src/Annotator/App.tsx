@@ -331,8 +331,10 @@ class App extends Component<{ props: any }, State> {
   handleAudioStop(data: any) {
     this.setState({ audioDetails: data });
   }
-  handleAudioUpload(file: any, content: any, position: any, comment: any) {
+  async handleAudioUpload(file: any, content: any, position: any, comment: any) {
     console.log("Content", content, position, comment);
+
+    if (!file) return;
 
     let formData = new FormData();
     this.props.setLoading(true);
@@ -345,32 +347,30 @@ class App extends Component<{ props: any }, State> {
     formData.append("file", file);
     formData.append("type", "audio");
 
-    api
-      .post(`${NETWORK_URL}/upload`, formData, {
+    try {
+      const result = await api.post(`${NETWORK_URL}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
-      .then((result) => {
-        if (result.status === 201) {
-          console.log(result, "audioFile");
-          this.setState({
-            recordedFile: result.data.data.id,
-            annotation_id: result?.data?.data?.id,
-            uploadLoader: false,
-          });
-          setTimeout(() => {
-            this.addHighlight({ content, position, comment });
-          }, 1000);
-          this.props.setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error?.response?.data, "error for Unaunthicated");
-        this.setState({ uploadLoader: false });
-        Sentry.captureEvent(error);
-        this.props.setLoading(false);
       });
+
+      if (result.status === 201) {
+        console.log(result, "audioFile");
+        this.setState({
+          recordedFile: result.data.data.id,
+          annotation_id: result?.data?.data?.id,
+        });
+        setTimeout(() => {
+          this.addHighlight({ content, position, comment });
+        }, 1000);
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data, "error for Unaunthicated");
+      Sentry.captureEvent(error);
+    } finally {
+      this.setState({ uploadLoader: false });
+      this.props.setLoading(false);
+    }
   }
   handleReset() {
     const reset = {
@@ -398,37 +398,41 @@ class App extends Component<{ props: any }, State> {
     this.setState({ uploadType: type, viewModal: true });
   }
 
-  handleUpload(content: any, position: any, comment: any) {
+  async handleUpload(content: any, position: any, comment: any) {
     console.log("Content", content, position, comment);
+    
+    if (!this.state.setAudioFile) return;
+
     this.props.setLoading(true);
+    this.setState({ uploadLoader: true });
     let formData = new FormData();
 
     formData.append("file", this.state.setAudioFile);
     formData.append("type", "audio");
 
-    api
-      .post(`${NETWORK_URL}/upload`, formData, {
+    try {
+      const result = await api.post(`${NETWORK_URL}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
-      .then((result) => {
-        if (result.status === 201) {
-          this.setState({
-            recordedFile: result.data.data.id,
-            annotation_id: result.data.data.id,
-          });
-          setTimeout(() => {
-            this.addHighlight({ content, position, comment });
-          }, 1000);
-          this.props.setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        this.props.setLoading(false);
-        Sentry.captureEvent(error);
       });
+
+      if (result.status === 201) {
+        this.setState({
+          recordedFile: result.data.data.id,
+          annotation_id: result.data.data.id,
+        });
+        setTimeout(() => {
+          this.addHighlight({ content, position, comment });
+        }, 1000);
+      }
+    } catch (error: any) {
+      console.log(error);
+      Sentry.captureEvent(error);
+    } finally {
+      this.setState({ uploadLoader: false });
+      this.props.setLoading(false);
+    }
   }
 
   togglePlay = (audio: any, type: any) => {
@@ -583,6 +587,7 @@ class App extends Component<{ props: any }, State> {
                           />
                           <button
                             type="button"
+                            disabled={this.state.uploadLoader}
                             onClick={() =>
                               this.handleUpload(
                                 content,
@@ -599,7 +604,7 @@ class App extends Component<{ props: any }, State> {
                               cursor: "pointer",
                             }}
                           >
-                            save
+                            {this.state.uploadLoader ? "Uploading..." : "save"}
                           </button>
                         </div>
                         <div id="record-type" style={{ display: "none" }}>
