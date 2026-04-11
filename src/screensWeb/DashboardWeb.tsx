@@ -168,8 +168,18 @@ export default function DashboardTeacher({ navigation }: any) {
           }
         });
         
-        const data = await res.json();
-        console.log("Response:", data);
+        let data;
+        try {
+          data = await res.json();
+        } catch (e) {
+          console.error("Invalid JSON response", e);
+          alert("Server error: invalid response");
+          setCreateLoad(false);
+          return;
+        }
+
+        console.log("Upload response:", data);
+        console.log("Status:", res.status);
 
         if (!res.ok || data.success === false) {
           alert(data.message || "Upload failed");
@@ -183,7 +193,6 @@ export default function DashboardTeacher({ navigation }: any) {
         handleRemove();
         setFile_name("");
         alert("Tanzabook Created Succesfully");
-        window.location.reload();
       } catch (err: any) {
         console.log(err);
         alert(err.message || "Upload failed");
