@@ -128,7 +128,6 @@ const Briefcase = ({ navigation }: any) => {
 
   const handleRemove = React.useCallback(() => {
     setFiles([]);
-    setFileRejections([]);
   }, []);
   const handlePress = () => false;
 
@@ -180,9 +179,7 @@ const Briefcase = ({ navigation }: any) => {
         try {
           data = await res.json();
         } catch (e) {
-          console.error("Invalid JSON response", e);
-          alert("Server error: invalid response");
-          setCreateLoad(false);
+          alert("Invalid server response");
           return;
         }
 
@@ -191,7 +188,6 @@ const Briefcase = ({ navigation }: any) => {
 
         if (!res.ok || data.success === false) {
           alert(data.message || "Upload failed");
-          setCreateLoad(false);
           return;
         }
 
