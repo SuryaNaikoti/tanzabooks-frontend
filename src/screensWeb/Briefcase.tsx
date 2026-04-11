@@ -152,43 +152,51 @@ const Briefcase = ({ navigation }: any) => {
     }
   };
 
-  const createTanza = () => {
-    // modifications removed ->setFolder_id !== "" &&
-    setCreateLoad(true);
+  const createTanza = async () => {
     if (file_name !== "" && files.length > 0) {
-      const formData = new FormData();
-      formData.append("name", file_name);
-      formData.append("folder_id", String(folder_id));
-      formData.append("file", files[0]);
+      try {
+        setCreateLoad(true);
+        const formData = new FormData();
+        formData.append("name", file_name);
+        formData.append("description", "");
+        formData.append("folder_id", String(folder_id));
+        formData.append("file", files[0]);
+        formData.append("type", "file"); // IMPORTANT
 
-      console.log("TANZABOOK PAYLOAD:", {
-        name: file_name,
-        folder_id: String(folder_id),
-        file: files[0]?.name
-      });
+        console.log("Uploading FormData...");
+        console.log(file_name, "", files[0]);
 
-      api
-        .post("/tanzabook", formData)
-        .then((response) => {
-          console.log("UPLOAD RESPONSE:", response.data);
-
-          if (response.data && response.data.success === true) {
-            setVisiblePop(!visiblePop);
-            getFolderWithId();
-            getFolders();
-            alert("Tanzabook Created Succesfully");
-            window.location.reload();
-          } else {
-            console.error("Upload failed:", response.data);
-            alert(response.data?.message || "Upload failed");
-            return;
+        const token = localStorage.getItem("tbzToken");
+        const res = await fetch(`${NETWORK_URL}/tanzabooks`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json"
           }
-        })
-        .catch((err) => {
-          console.error("UPLOAD ERROR:", err.response?.data || err);
-          alert(err.response?.data?.message || "Upload failed");
-          Sentry.captureException(err);
         });
+        
+        const data = await res.json();
+        console.log("Response:", data);
+
+        if (!res.ok || data.success === false) {
+          alert(data.message || "Upload failed");
+          setCreateLoad(false);
+          return;
+        }
+
+        setVisiblePop(!visiblePop);
+        handleRemove(); /* ensure files array clears */
+        getFolderWithId();
+        getFolders();
+        alert("Tanzabook Created Succesfully");
+        window.location.reload();
+      } catch (err: any) {
+        console.log(err);
+        alert(err.message || "Upload failed");
+      } finally {
+        setCreateLoad(false);
+      }
     } else {
       alert("Please Fill Required Fields");
     }
@@ -926,6 +934,7 @@ const Briefcase = ({ navigation }: any) => {
                   alignItems: "center",
                   justifyContent: "center",
                 }}
+                disabled={createLoad}
                 onPress={() => {
                   createTanza();
                 }}
