@@ -80,12 +80,35 @@ export const Orders = () => {
   const [selectedOption, setSelectedOption] = React.useState<any>({});
   const [postRes, setPostRes] = React.useState<any>("");
   const [list, setList] = React.useState<any>([]);
-  const [fileRejections, setFileRejections] = React.useState([]);
-  const [setFolder_id, setAllFolder_id] = React.useState("");
-  const [file_name, setFile_name] = React.useState(" ");
-  const [visiblePop, setVisiblePop] = React.useState(false);
   const [files, setFiles] = React.useState([]);
-  const handleChange = React.useCallback((files) => setFiles([files[0]]), []);
+  const [createLoad, setCreateLoad] = React.useState(false);
+  const [previewUrl, setPreviewUrl] = React.useState("");
+
+  const handleChange = React.useCallback((files) => {
+    const file = files[0];
+    if (file) {
+      setFiles([file]);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  }, []);
+
+  const handleRemove = React.useCallback(() => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl("");
+    setFiles([]);
+    setFileRejections([]);
+  }, [previewUrl]);
+
+  React.useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
     // <View style={styles.container}>

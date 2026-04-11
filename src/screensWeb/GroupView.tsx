@@ -81,15 +81,37 @@ const GroupView = ({ navigation }: any) => {
   const [list, setList] = React.useState<any>([]);
   const [fileRejections, setFileRejections] = React.useState([]);
   const [setFolder_id, setAllFolder_id] = React.useState("");
-  const [file_name, setFile_name] = React.useState(" ");
-  const [visiblePop, setVisiblePop] = React.useState(false);
   const [files, setFiles] = React.useState([]);
-  const handleChange = React.useCallback((files) => setFiles([files[0]]), []);
+  const [createLoad, setCreateLoad] = React.useState(false);
+  const [previewUrl, setPreviewUrl] = React.useState("");
+
+  const handleChange = React.useCallback((files) => {
+    const file = files[0];
+    if (file) {
+      setFiles([file]);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  }, []);
 
   const handleRemove = React.useCallback(() => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl("");
     setFiles([]);
     setFileRejections([]);
-  }, []);
+  }, [previewUrl]);
+
+  React.useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  // handleRemove moved above for previewUrl visibility
 
   const group_id = useSelector((store: any) => store?.designReducer?.groupId);
   console.log("Group ID", group_id);
@@ -258,43 +280,97 @@ const GroupView = ({ navigation }: any) => {
   };
 
   //Create Tanza books Function
-  const createTanza = () => {
-    if (setFolder_id !== "" && file_name !== "" && files.length > 0) {
-      let formData = new FormData();
-      formData.append("name", file_name);
-      formData.append("file", files[0]);
-      formData.append("folder_id", setFolder_id);
+  const createTanza = async () => {
+    if (file_name.trim() !== "" && files.length > 0) {
+      try {
+        setCreateLoad(true);
+        const token = localStorage.getItem("tbzToken");
 
-      // console.log("Form Data", formData)
-      setVisiblePop(false);
-      // api
-      //   .post(
-      //     `${NETWORK_URL}/tanzabook`,
-      //     // {
-      //     formData,
-      //     // },
-      //     {
-      //       headers: {
-      //         "Content-Type": "multipart/form-data",
-      //       },
-      //     }
-      //   )
-      //   .then((response) => {
-      //     console.log("tanzabook", response);
-      //     localStorage.setItem("tanzabook_id", response.data.data.folder_id);
-      //     // alert("book-created");
-      //     setVisiblePop(!visiblePop);
-      //     setFile_name("");
-      //     window.location.reload();
-      //   })
+        // --- STEP 1: CREATE FOLDER ---
+        console.log("Step 1: Creating Brief Folder - Request Payload:", { name: file_name.trim() });
+        const folderResponse = await fetch(`${NETWORK_URL}/brief-folder`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ name: file_name.trim() }),
+        });
 
-      //   .catch(function (error: any) {
-      //     console.log("error:", error);
-      // Sentry.captureException(error);
+        let folderData;
+        try {
+          folderData = await folderResponse.json();
+          console.log("Step 1 Response:", folderData);
+        } catch (e) {
+          console.error("Critical: Failed to parse folder creation response", e);
+          throw new Error("Invalid folder creation response from server");
+        }
 
-      //   });
+        if (!folderResponse.ok || folderData.success === false) {
+          console.error("Folder creation failed:", folderData);
+          throw new Error(folderData.message || "Folder creation failed");
+        }
+
+        const newFolderId = folderData.data?.id;
+        console.log("Step 1 Success: Folder ID =", newFolderId);
+
+        // --- STEP 2: UPLOAD FILE ---
+        const formData = new FormData();
+        formData.append("name", file_name.trim());
+        formData.append("description", "");
+        formData.append("folder_id", String(newFolderId));
+        formData.append("file", files[0]);
+        formData.append("type", "file");
+
+        console.log("Step 2: Uploading File - FormData Payload:", {
+          name: file_name.trim(),
+          folder_id: newFolderId,
+          file: files[0]?.name,
+          type: "file"
+        });
+
+        const res = await fetch(`${NETWORK_URL}/tanzabooks`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json"
+          }
+        });
+        
+        let data;
+        try {
+          data = await res.json();
+          console.log("Step 2 Response:", data);
+        } catch (e) {
+          console.error("Critical: Failed to parse upload response", e);
+          throw new Error("Invalid upload response from server");
+        }
+
+        if (!res.ok || data.success === false) {
+          console.error("Tanzabook upload failed:", data);
+          throw new Error(data.message || "Upload failed");
+        }
+
+        console.log("Full Sequential Creation Success:", data);
+        localStorage.setItem("tanzabook_id", data.data?.folder_id || data.data?.id);
+        
+        // Reset states
+        setVisiblePop(false);
+        handleRemove(); // ensure files array clears
+        setFile_name("");
+        // alert("book-created");
+        alert("Tanzabook Created Successfully");
+        // Navigation or refresh logic if needed
+      } catch (err: any) {
+        console.error("CREATE TANZABOOK ERROR:", err);
+        alert(err.message || "Sequential creation failed");
+      } finally {
+        setCreateLoad(false);
+      }
     } else {
-      alert("Please Fill All Fields");
+      alert("Please provide both a name and a file");
     }
   };
 
@@ -1452,23 +1528,121 @@ const GroupView = ({ navigation }: any) => {
               marginLeft: wp(1),
             }}
           >
-            <Pane maxWidth={300}>
+            <Pane maxWidth={500}>
               <FileUploader
+                acceptedMimeTypes={["application/pdf", "image/jpeg", "image/png"]}
                 label="Upload File"
-                description="Takes only jpg and pdf files."
+                description="Takes jpg, png and pdf files."
                 maxSizeInBytes={50 * 1024 ** 2}
                 maxFiles={1}
                 onChange={handleChange}
                 renderFile={(file) => {
+                  const fileRejection = fileRejections.find(
+                    (fileRejection) => fileRejection.file === file
+                  );
+                  const { message } = fileRejection || {};
                   const { name, size, type } = file;
+                  const isPDF = type === "application/pdf";
                   return (
-                    <FileCard
+                    <View
                       key={name}
-                      name={name}
-                      onRemove={handleRemove}
-                      sizeInBytes={size}
-                      type={type}
-                    />
+                      style={{
+                        marginTop: 10,
+                        borderWidth: 1,
+                        borderColor: "#E6E8F0",
+                        borderRadius: 8,
+                        padding: 10,
+                        backgroundColor: "#F9FAFC",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: previewUrl && !isPDF ? 10 : 0,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 10,
+                            flex: 1,
+                          }}
+                        >
+                          <AntDesign
+                            name={isPDF ? "pdffile1" : "picture"}
+                            size={24}
+                            color={isPDF ? "#D14343" : "#3599B8"}
+                          />
+                          <View style={{ flex: 1 }}>
+                            <Text
+                              numberOfLines={1}
+                              style={{
+                                fontWeight: "600",
+                                fontSize: 13,
+                                color: "#425A70",
+                              }}
+                            >
+                              {name}
+                            </Text>
+                            <Text style={{ fontSize: 11, color: "#69778A" }}>
+                              {(size / 1024).toFixed(1)} KB
+                            </Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity onPress={handleRemove}>
+                          <Entypo name="cross" size={20} color="#69778A" />
+                        </TouchableOpacity>
+                      </View>
+
+                      {previewUrl && !isPDF && (
+                        <View
+                          style={{
+                            maxHeight: 180,
+                            width: "100%",
+                            overflow: "hidden",
+                            borderRadius: 4,
+                            marginTop: 5,
+                            alignItems: "center",
+                            backgroundColor: "#EBEDF2",
+                          }}
+                        >
+                          <Image
+                            source={{ uri: previewUrl }}
+                            style={{
+                              width: "100%",
+                              height: 180,
+                            }}
+                            resizeMode="contain"
+                          />
+                        </View>
+                      )}
+                      
+                      {isPDF && (
+                        <View style={{
+                          marginTop: 8,
+                          padding: 8,
+                          backgroundColor: "#f0f2f5",
+                          borderRadius: 4,
+                          borderStyle: "dashed",
+                          borderWidth: 1,
+                          borderColor: "#d1d5db",
+                          alignItems: "center"
+                        }}>
+                          <Text style={{ fontSize: 12, color: "#4b5563" }}>
+                            PDF Preview Disabled for Stability
+                          </Text>
+                        </View>
+                      )}
+                      
+                      {message && (
+                        <Text style={{ color: "#D14343", fontSize: 12, marginTop: 5 }}>
+                          {message}
+                        </Text>
+                      )}
+                    </View>
                   );
                 }}
                 values={files}
@@ -1498,7 +1672,7 @@ const GroupView = ({ navigation }: any) => {
                     paddingVertical: 4,
                   }}
                 >
-                  Create
+                  {createLoad ? "Loading..." : "Create"}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity

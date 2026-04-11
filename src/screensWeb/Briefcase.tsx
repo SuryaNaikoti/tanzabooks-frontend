@@ -77,12 +77,36 @@ const Briefcase = ({ navigation }: any) => {
   const [body, setBody] = React.useState("");
   const [r_name, setR_name] = React.useState();
   const [file_name, setFile_name] = React.useState("");
-  const handleChange = React.useCallback((files) => setFiles([files[0]]), []);
+  const handleChange = React.useCallback((files) => {
+    const file = files[0];
+    if (file) {
+      setFiles([file]);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  }, []);
+
+  const handleRemove = React.useCallback(() => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl("");
+    setFiles([]);
+  }, [previewUrl]);
+
+  React.useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const [data, setData] = React.useState([]);
   const [search, setSearch] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [visiblePull, setVisiblePull] = React.useState(false);
+  const [previewUrl, setPreviewUrl] = React.useState("");
   const [books, setBooks] = React.useState("");
   const [tanza, show_Tanza] = React.useState("");
   const [selectedUserData, setSelectedUserData] = React.useState<any>([]);
@@ -152,20 +176,55 @@ const Briefcase = ({ navigation }: any) => {
   };
 
   const createTanza = async () => {
-    if (file_name !== "" && files.length > 0) {
+    if (file_name.trim() !== "" && files.length > 0) {
       try {
         setCreateLoad(true);
-        const formData = new FormData();
-        formData.append("name", file_name);
-        formData.append("description", "");
-        formData.append("folder_id", String(folder_id));
-        formData.append("file", files[0]);
-        formData.append("type", "file"); // IMPORTANT
-
-        console.log("Uploading FormData...");
-        console.log(file_name, "", files[0]);
-
         const token = localStorage.getItem("tbzToken");
+
+        // --- STEP 1: CREATE FOLDER ---
+        console.log("Step 1: Creating Brief Folder - Request Payload:", { name: file_name.trim() });
+        const folderResponse = await fetch(`${NETWORK_URL}/brief-folder`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ name: file_name.trim() }),
+        });
+
+        let folderData;
+        try {
+          folderData = await folderResponse.json();
+          console.log("Step 1 Response:", folderData);
+        } catch (e) {
+          console.error("Critical: Failed to parse folder creation response", e);
+          throw new Error("Invalid folder creation response from server");
+        }
+
+        if (!folderResponse.ok || folderData.success === false) {
+          console.error("Folder creation failed:", folderData);
+          throw new Error(folderData.message || "Folder creation failed");
+        }
+
+        const newFolderId = folderData.data?.id;
+        console.log("Step 1 Success: Folder ID =", newFolderId);
+
+        // --- STEP 2: UPLOAD FILE ---
+        const formData = new FormData();
+        formData.append("name", file_name.trim());
+        formData.append("description", "");
+        formData.append("folder_id", String(newFolderId));
+        formData.append("file", files[0]);
+        formData.append("type", "file");
+
+        console.log("Step 2: Uploading File - FormData Payload:", {
+          name: file_name.trim(),
+          folder_id: newFolderId,
+          file: files[0]?.name,
+          type: "file"
+        });
+
         const res = await fetch(`${NETWORK_URL}/tanzabooks`, {
           method: "POST",
           body: formData,
@@ -178,32 +237,35 @@ const Briefcase = ({ navigation }: any) => {
         let data;
         try {
           data = await res.json();
+          console.log("Step 2 Response:", data);
         } catch (e) {
-          alert("Invalid server response");
-          return;
+          console.error("Critical: Failed to parse upload response", e);
+          throw new Error("Invalid upload response from server");
         }
-
-        console.log("Upload response:", data);
-        console.log("Status:", res.status);
 
         if (!res.ok || data.success === false) {
-          alert(data.message || "Upload failed");
-          return;
+          console.error("Tanzabook upload failed:", data);
+          throw new Error(data.message || "Upload failed");
         }
 
-        setVisiblePop(!visiblePop);
-        handleRemove(); /* ensure files array clears */
+        console.log("Full Sequential Creation Success:", data);
+        localStorage.setItem("tanzabook_id", data.data?.folder_id || data.data?.id);
+        
+        // Reset states
+        setVisiblePop(false);
+        handleRemove(); // ensure files array clears
+        setFile_name("");
         getFolderWithId();
         getFolders();
-        alert("Tanzabook Created Succesfully");
+        alert("Tanzabook Created Successfully");
       } catch (err: any) {
-        console.log(err);
-        alert(err.message || "Upload failed");
+        console.error("CREATE TANZABOOK ERROR:", err);
+        alert(err.message || "Sequential creation failed");
       } finally {
         setCreateLoad(false);
       }
     } else {
-      alert("Please Fill Required Fields");
+      alert("Please provide both a name and a file");
     }
   };
 
@@ -224,16 +286,47 @@ const Briefcase = ({ navigation }: any) => {
       .then((response) => {
         console.log("response", response);
         setLoading(true);
-        setList(response.data.data.data);
-        // setLoading(false);
-
-        // console.log("Popup folders", response.data.data);
+        // Normalize folders from the new API if necessary
+        const folders = response.data.data.data.map((f: any) => ({
+          ...f,
+          folder_name: f.name || f.folder_name,
+          createdAt: f.created_at || f.createdAt,
+        }));
+        setList(folders);
       })
-
       .catch(function (error: any) {
         console.log(error);
         Sentry.captureException(error);
       });
+  };
+
+  const createBriefFolder = async () => {
+    if (pop === "") {
+      alert("Please enter the name of folder");
+      return;
+    }
+    try {
+      setCreateLoad(true);
+      const res = await api.post(`${NETWORK_URL}/brief-folder`, {
+        name: pop,
+      });
+
+      console.log("Folder Creation Response:", res.data);
+
+      if (res.data && (res.data.success === true || res.data.id)) {
+        setPop("");
+        setVisiblePull(false);
+        getFolders(); // Refresh list
+        alert("Folder Created Successfully");
+      } else {
+        alert(res.data?.message || "Folder creation failed");
+      }
+    } catch (err: any) {
+      console.error("Folder Creation Error:", err.response?.data || err);
+      alert(err.response?.data?.message || "Folder creation failed");
+    } finally {
+      setCreateLoad(false);
+    }
   };
 
   const ShareMember = () => {
@@ -412,33 +505,61 @@ const Briefcase = ({ navigation }: any) => {
             <View>
               <Text style={styles.headertext}>{folder_name}</Text>
             </View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: colors.black,
-                marginRight: wp(100) < 425 ? wp(2) : wp(2),
-                width: wp(100) < 425 ? hp(20) : wp(10),
-                borderRadius: 7,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onPress={() => {
-                setVisiblePop(!visiblePop);
-                setShowOptions(false);
-              }}
-            >
-              <Text
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
                 style={{
-                  alignSelf: "center",
-                  // paddingHorizontal:8,
-                  paddingVertical: 7,
-                  fontSize: 12,
-                  fontWeight: "750",
-                  color: "white",
+                  backgroundColor: colors.primary,
+                  marginRight: wp(1),
+                  width: wp(100) < 425 ? hp(20) : wp(10),
+                  borderRadius: 7,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => {
+                  setVisiblePull(true);
+                  setShowOptions(false);
                 }}
               >
-                Create Tanzabook
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    alignSelf: "center",
+                    paddingVertical: 7,
+                    fontSize: 12,
+                    fontWeight: "750",
+                    color: "white",
+                  }}
+                >
+                  Create Folder
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.black,
+                  marginRight: wp(100) < 425 ? wp(2) : wp(2),
+                  width: wp(100) < 425 ? hp(20) : wp(10),
+                  borderRadius: 7,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => {
+                  setVisiblePop(!visiblePop);
+                  setShowOptions(false);
+                }}
+              >
+                <Text
+                  style={{
+                    alignSelf: "center",
+                    // paddingHorizontal:8,
+                    paddingVertical: 7,
+                    fontSize: 12,
+                    fontWeight: "750",
+                    color: "white",
+                  }}
+                >
+                  Create Tanzabook
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
           {loading ? (
             <View
@@ -896,25 +1017,111 @@ const Briefcase = ({ navigation }: any) => {
           >
             {/* <input type="file" id="avatar" name="avatar" accept="pdf" /> */}
 
-            <Pane maxWidth={300}>
+            <Pane maxWidth={500}>
               <FileUploader
-                acceptedMimeTypes={["application/pdf", "image/jpeg"]}
+                acceptedMimeTypes={["application/pdf", "image/jpeg", "image/png"]}
                 label="Upload File"
-                description="Takes only jpg and pdf files."
+                description="Takes jpg, png and pdf files."
                 maxSizeInBytes={50 * 1024 ** 2}
                 maxFiles={1}
                 onChange={handleChange}
                 renderFile={(file) => {
                   const { name, size, type } = file;
+                  const isPDF = type === "application/pdf";
                   return (
-                    <FileCard
+                    <View
                       key={name}
-                      name={name}
-                      onRemove={handleRemove}
-                      sizeInBytes={size}
-                      type={type}
-                      // validationMessage={message}
-                    />
+                      style={{
+                        marginTop: 10,
+                        borderWidth: 1,
+                        borderColor: "#E6E8F0",
+                        borderRadius: 8,
+                        padding: 10,
+                        backgroundColor: "#F9FAFC",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: previewUrl && !isPDF ? 10 : 0,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 10,
+                            flex: 1,
+                          }}
+                        >
+                          <AntDesign
+                            name={isPDF ? "pdffile1" : "picture"}
+                            size={24}
+                            color={isPDF ? "#D14343" : "#3599B8"}
+                          />
+                          <View style={{ flex: 1 }}>
+                            <Text
+                              numberOfLines={1}
+                              style={{
+                                fontWeight: "600",
+                                fontSize: 13,
+                                color: "#425A70",
+                              }}
+                            >
+                              {name}
+                            </Text>
+                            <Text style={{ fontSize: 11, color: "#69778A" }}>
+                              {(size / 1024).toFixed(1)} KB
+                            </Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity onPress={handleRemove}>
+                          <Entypo name="cross" size={20} color="#69778A" />
+                        </TouchableOpacity>
+                      </View>
+
+                      {previewUrl && !isPDF && (
+                        <View
+                          style={{
+                            maxHeight: 180,
+                            width: "100%",
+                            overflow: "hidden",
+                            borderRadius: 4,
+                            marginTop: 5,
+                            alignItems: "center",
+                            backgroundColor: "#EBEDF2",
+                          }}
+                        >
+                          <Image
+                            source={{ uri: previewUrl }}
+                            style={{
+                              width: "100%",
+                              height: 180,
+                            }}
+                            resizeMode="contain"
+                          />
+                        </View>
+                      )}
+                      
+                      {isPDF && (
+                        <View style={{
+                          marginTop: 8,
+                          padding: 8,
+                          backgroundColor: "#f0f2f5",
+                          borderRadius: 4,
+                          borderStyle: "dashed",
+                          borderWidth: 1,
+                          borderColor: "#d1d5db",
+                          alignItems: "center"
+                        }}>
+                          <Text style={{ fontSize: 12, color: "#4b5563" }}>
+                            PDF Preview Disabled for Stability
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   );
                 }}
                 values={files}
@@ -1175,6 +1382,82 @@ const Briefcase = ({ navigation }: any) => {
           </View>
         </View>
       </SharePop>
+      <Popup modalVisible={visiblePull}>
+        <View style={{ padding: 10 }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text
+              style={{
+                fontFamily: "Lato",
+                fontWeight: "800",
+                fontSize: 16,
+              }}
+            >
+              Create Brief Folder
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setVisiblePull(false);
+              }}
+            >
+              <Entypo name="cross" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+
+          <Input
+            placeholder="Enter Folder Name"
+            value={pop}
+            onChangeText={(text) => setPop(text)}
+            style={{
+              width: wp(100) <= 500 ? "85%" : "100%",
+              padding: 10,
+              borderWidth: 2,
+              borderColor: colors.primary,
+              borderRadius: 10,
+              marginTop: 20,
+              outlineStyle: "none",
+            }}
+            theme={{ roundness: 10 }}
+            onKeyPress={(e: any) => {
+              if (e.nativeEvent.key === "Enter" && pop.length > 0) {
+                createBriefFolder();
+              }
+            }}
+          />
+
+          <View style={{ flexDirection: "row-reverse", marginTop: 20, gap: 10 }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.primary,
+                borderRadius: 7,
+                paddingHorizontal: 20,
+                paddingVertical: 8,
+              }}
+              disabled={createLoad}
+              onPress={createBriefFolder}
+            >
+              <Text style={{ color: "white", fontWeight: "600" }}>
+                {createLoad ? "Saving..." : "Save"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "black",
+                borderRadius: 7,
+                paddingHorizontal: 20,
+                paddingVertical: 8,
+              }}
+              onPress={() => {
+                setVisiblePull(false);
+                setPop("");
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "600" }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Popup>
     </View>
   );
 };

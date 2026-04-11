@@ -67,10 +67,31 @@ export default function DashboardTeacher({ navigation }: any) {
   const [r_name, setR_name] = React.useState("");
   const [frn, frn1] = React.useState();
   const [hover, setHover] = React.useState("");
+  const handleChange = React.useCallback((files) => {
+    const file = files[0];
+    if (file) {
+      setFiles([file]);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  }, []);
+
   const handleRemove = React.useCallback(() => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl("");
     setFiles([]);
     setFileRejections([]);
-  }, []);
+  }, [previewUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const [optionsSelectedValue, setOptionsSelectedValue] = useState<any>([]);
 
@@ -105,6 +126,7 @@ export default function DashboardTeacher({ navigation }: any) {
   const [errorMessage, setErrormessage] = useState("");
   const [model, setModel] = useState(false);
   const [createLoad, setCreateLoad] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   const [searchQuery, setSearchQuery] = React.useState("");
 
@@ -145,20 +167,55 @@ export default function DashboardTeacher({ navigation }: any) {
   };
 
   const createTanza = async () => {
-    if (setFolder_id !== "" && file_name !== "" && files.length > 0) {
+    if (file_name.trim() !== "" && files.length > 0) {
       try {
         setCreateLoad(true);
-        const formData = new FormData();
-        formData.append("name", file_name);
-        formData.append("description", "");
-        formData.append("folder_id", String(setFolder_id));
-        formData.append("file", files[0]);
-        formData.append("type", "file"); // IMPORTANT
-
-        console.log("Uploading FormData...");
-        console.log(file_name, "", files[0]);
-
         const token = localStorage.getItem("tbzToken");
+        
+        // --- STEP 1: CREATE FOLDER ---
+        console.log("Step 1: Creating Brief Folder - Request Payload:", { name: file_name.trim() });
+        const folderResponse = await fetch(`${NETWORK_URL}/brief-folder`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ name: file_name.trim() }),
+        });
+
+        let folderData;
+        try {
+          folderData = await folderResponse.json();
+          console.log("Step 1 Response:", folderData);
+        } catch (e) {
+          console.error("Critical: Failed to parse folder creation response", e);
+          throw new Error("Invalid folder creation response");
+        }
+
+        if (!folderResponse.ok || folderData.success === false) {
+          console.error("Folder creation failed:", folderData);
+          throw new Error(folderData.message || "Folder creation failed");
+        }
+
+        const newFolderId = folderData.data?.id;
+        console.log("Step 1 Success: Folder ID =", newFolderId);
+
+        // --- STEP 2: UPLOAD FILE ---
+        const formData = new FormData();
+        formData.append("name", file_name.trim());
+        formData.append("description", "");
+        formData.append("folder_id", String(newFolderId));
+        formData.append("file", files[0]);
+        formData.append("type", "file");
+
+        console.log("Step 2: Uploading File - FormData Payload:", {
+          name: file_name.trim(),
+          folder_id: newFolderId,
+          file: files[0]?.name,
+          type: "file"
+        });
+
         const res = await fetch(`${NETWORK_URL}/tanzabooks`, {
           method: "POST",
           body: formData,
@@ -171,36 +228,34 @@ export default function DashboardTeacher({ navigation }: any) {
         let data;
         try {
           data = await res.json();
+          console.log("Step 2 Response:", data);
         } catch (e) {
-          console.error("Invalid JSON response", e);
-          alert("Server error: invalid response");
-          setCreateLoad(false);
-          return;
+          console.error("Critical: Failed to parse upload response", e);
+          throw new Error("Invalid upload response from server");
         }
-
-        console.log("Upload response:", data);
-        console.log("Status:", res.status);
 
         if (!res.ok || data.success === false) {
-          alert(data.message || "Upload failed");
-          setCreateLoad(false);
-          return;
+          console.error("Tanzabook upload failed:", data);
+          throw new Error(data.message || "Upload failed");
         }
 
+        console.log("Full Sequential Creation Success:", data);
         localStorage.setItem("tanzabook_id", data.data?.folder_id || data.data?.id);
-        setFolder(!folder);
-        setVisiblePop(!visiblePop);
-        handleRemove();
+        
+        // Reset states
+        setVisiblePop(false);
+        handleRemove(); // ensure files array clears
         setFile_name("");
-        alert("Tanzabook Created Succesfully");
+        getFolders();
+        alert("Tanzabook Created Successfully");
       } catch (err: any) {
-        console.log(err);
-        alert(err.message || "Upload failed");
+        console.error("CREATE TANZABOOK ERROR:", err);
+        alert(err.message || "Sequential creation failed");
       } finally {
         setCreateLoad(false);
       }
     } else {
-      alert("Please Fill All Fields");
+      alert("Please provide both a name and a file");
     }
   };
 
@@ -217,15 +272,31 @@ export default function DashboardTeacher({ navigation }: any) {
       })
       .then((response) => {
         console.log("RES", response);
-        setData(response.data.data);
+        const dashboardData = response.data.data;
+        
+        // Normalize folders and shared folders
+        if (dashboardData?.folders?.data) {
+          dashboardData.folders.data = dashboardData.folders.data.map((f: any) => ({
+            ...f,
+            folder_name: f.name || f.folder_name,
+            createdAt: f.created_at || f.createdAt,
+          }));
+        }
+        if (dashboardData?.shared_with_me?.data) {
+          dashboardData.shared_with_me.data = dashboardData.shared_with_me.data.map((f: any) => ({
+            ...f,
+            folder_name: f.name || f.folder_name,
+            createdAt: f.created_at || f.createdAt,
+          }));
+        }
+
+        setData(dashboardData);
         setLoading(true);
         setFolder(true);
-        console.log(" Dashboard folders", response.data.data);
+        console.log(" Dashboard folders", dashboardData);
       })
-
       .catch(function (error: any) {
-        setErrormessage(errorMessage);
-        console.log("Folders", error);
+        console.log("Folders Error", error);
         Sentry.captureException(error);
       });
   };
@@ -233,23 +304,28 @@ export default function DashboardTeacher({ navigation }: any) {
   function createfolder() {
     if (pop == "") {
       alert("please Enter the name of folder");
+      return;
     }
-    api.post(`${NETWORK_URL}/folder`, {
+    setCreateLoad(true);
+    api.post(`${NETWORK_URL}/brief-folder`, {
       name: pop,
-    }, {
-      headers: {
-      }
     })
       .then((response) => {
-        window.location.reload();
-        setPostRes(response);
-        setVisiblePull(false);
-        setLoading(true);
+        console.log("Folder Creation Response:", response.data);
+        
         setPop("");
+        setVisiblePull(false);
+        // Better UX: Trigger a fetch instead of hard reload
+        getFolders();
+        alert("Folder Created Successfully");
       })
       .catch(function (errorMessage: any) {
-        console.log(errorMessage);
+        console.log("Folder Creation Error:", errorMessage.response?.data || errorMessage);
+        alert(errorMessage.response?.data?.message || "Folder creation failed");
         Sentry.captureException(errorMessage);
+      })
+      .finally(() => {
+        setCreateLoad(false);
       });
   }
 
@@ -311,7 +387,13 @@ export default function DashboardTeacher({ navigation }: any) {
           },
         })
         .then((response) => {
-          setList(response.data.data.data);
+          const rawFolders = response.data.data.data;
+          const normalizedFolders = rawFolders.map((f: any) => ({
+            ...f,
+            folder_name: f.name || f.folder_name,
+            createdAt: f.created_at || f.createdAt,
+          }));
+          setList(normalizedFolders);
         })
 
         .catch(function (errorMessage: any) {
@@ -1959,11 +2041,11 @@ export default function DashboardTeacher({ navigation }: any) {
             }}
           >
             {/* <input type="file" id="avatar" name="avatar" accept="pdf" /> */}
-            <Pane maxWidth={300}>
+            <Pane maxWidth={500}>
               <FileUploader
-                acceptedMimeTypes={["application/pdf", "image/jpeg"]}
+                acceptedMimeTypes={["application/pdf", "image/jpeg", "image/png"]}
                 label="Upload File"
-                description="Takes only jpg and pdf files."
+                description="Takes jpg, png and pdf files."
                 maxSizeInBytes={50 * 1024 ** 2}
                 maxFiles={1}
                 onChange={handleChange}
@@ -1973,15 +2055,107 @@ export default function DashboardTeacher({ navigation }: any) {
                   );
                   const { message } = fileRejection || {};
                   const { name, size, type } = file;
+                  const isPDF = type === "application/pdf";
                   return (
-                    <FileCard
+                    <View
                       key={name}
-                      name={name}
-                      onRemove={handleRemove}
-                      sizeInBytes={size}
-                      type={type}
-                      validationMessage={message}
-                    />
+                      style={{
+                        marginTop: 10,
+                        borderWidth: 1,
+                        borderColor: "#E6E8F0",
+                        borderRadius: 8,
+                        padding: 10,
+                        backgroundColor: "#F9FAFC",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: previewUrl && !isPDF ? 10 : 0,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 10,
+                            flex: 1,
+                          }}
+                        >
+                          <AntDesign
+                            name={isPDF ? "pdffile1" : "picture"}
+                            size={24}
+                            color={isPDF ? "#D14343" : "#3599B8"}
+                          />
+                          <View style={{ flex: 1 }}>
+                            <Text
+                              numberOfLines={1}
+                              style={{
+                                fontWeight: "600",
+                                fontSize: 13,
+                                color: "#425A70",
+                              }}
+                            >
+                              {name}
+                            </Text>
+                            <Text style={{ fontSize: 11, color: "#69778A" }}>
+                              {(size / 1024).toFixed(1)} KB
+                            </Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity onPress={handleRemove}>
+                          <Entypo name="cross" size={20} color="#69778A" />
+                        </TouchableOpacity>
+                      </View>
+
+                      {previewUrl && !isPDF && (
+                        <View
+                          style={{
+                            maxHeight: 180,
+                            width: "100%",
+                            overflow: "hidden",
+                            borderRadius: 4,
+                            marginTop: 5,
+                            alignItems: "center",
+                            backgroundColor: "#EBEDF2",
+                          }}
+                        >
+                          <Image
+                            source={{ uri: previewUrl }}
+                            style={{
+                              width: "100%",
+                              height: 180,
+                            }}
+                            resizeMode="contain"
+                          />
+                        </View>
+                      )}
+                      
+                      {isPDF && (
+                        <View style={{
+                          marginTop: 8,
+                          padding: 8,
+                          backgroundColor: "#f0f2f5",
+                          borderRadius: 4,
+                          borderStyle: "dashed",
+                          borderWidth: 1,
+                          borderColor: "#d1d5db",
+                          alignItems: "center"
+                        }}>
+                          <Text style={{ fontSize: 12, color: "#4b5563" }}>
+                            PDF Preview Disabled for Stability
+                          </Text>
+                        </View>
+                      )}
+                      
+                      {message && (
+                        <Text style={{ color: "#D14343", fontSize: 12, marginTop: 5 }}>
+                          {message}
+                        </Text>
+                      )}
+                    </View>
                   );
                 }}
                 values={files}

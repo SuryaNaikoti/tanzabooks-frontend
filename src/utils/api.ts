@@ -1,7 +1,7 @@
-import axios from "axios";
+import { NETWORK_URL } from "./config";
 
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "https://api.tanzabooks.com/api",
+  baseURL: NETWORK_URL,
 });
 
 api.interceptors.request.use((config) => {
