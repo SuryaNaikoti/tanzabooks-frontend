@@ -316,12 +316,17 @@ const GroupView = ({ navigation }: any) => {
         console.log("Step 1 Success: Folder ID =", newFolderId);
 
         // --- STEP 2: UPLOAD FILE ---
+        console.log("Token:", token);
+        if (!token) {
+          throw new Error("Authentication token missing. Please log in again.");
+        }
+
         const formData = new FormData();
-        formData.append("name", file_name.trim());
+        formData.append("name", file_name.trim() || "Untitled");
         formData.append("folder_id", String(newFolderId));
         formData.append("file", files[0]);
 
-        console.log("Sending FormData:");
+        console.log("=== UPLOAD DEBUG START ===");
         for (let pair of formData.entries()) {
           console.log(pair[0], pair[1]);
         }
@@ -336,19 +341,20 @@ const GroupView = ({ navigation }: any) => {
         });
 
         const text = await res.text();
-        console.log("Response:", text);
+        console.log("=== API RESPONSE ===");
+        console.log(text);
+
+        if (!res.ok) {
+          console.error("Upload failed:", text);
+          throw new Error("Upload failed: " + text.substring(0, 100));
+        }
 
         let data;
         try {
           data = JSON.parse(text);
         } catch (e) {
           console.error("Critical: Failed to parse upload response as JSON", e);
-          throw new Error("Invalid response from server: " + text.substring(0, 100));
-        }
-
-        if (!res.ok || data.success === false) {
-          console.error("Tanzabook upload failed:", data);
-          throw new Error(data.message || "Upload failed");
+          throw new Error("Invalid response from server");
         }
 
         console.log("Full Sequential Creation Success:", data);
