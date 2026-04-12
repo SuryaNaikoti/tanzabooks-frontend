@@ -318,34 +318,32 @@ const GroupView = ({ navigation }: any) => {
         // --- STEP 2: UPLOAD FILE ---
         const formData = new FormData();
         formData.append("name", file_name.trim());
-        formData.append("description", "");
         formData.append("folder_id", String(newFolderId));
         formData.append("file", files[0]);
-        formData.append("type", "file");
 
-        console.log("Step 2: Uploading File - FormData Payload:", {
-          name: file_name.trim(),
-          folder_id: newFolderId,
-          file: files[0]?.name,
-          type: "file"
-        });
+        console.log("Sending FormData:");
+        for (let pair of formData.entries()) {
+          console.log(pair[0], pair[1]);
+        }
 
         const res = await fetch(`${NETWORK_URL}/tanzabooks`, {
           method: "POST",
-          body: formData,
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json"
-          }
+            Accept: "application/json",
+          },
+          body: formData,
         });
-        
+
+        const text = await res.text();
+        console.log("Response:", text);
+
         let data;
         try {
-          data = await res.json();
-          console.log("Step 2 Response:", data);
+          data = JSON.parse(text);
         } catch (e) {
-          console.error("Critical: Failed to parse upload response", e);
-          throw new Error("Invalid upload response from server");
+          console.error("Critical: Failed to parse upload response as JSON", e);
+          throw new Error("Invalid response from server: " + text.substring(0, 100));
         }
 
         if (!res.ok || data.success === false) {
